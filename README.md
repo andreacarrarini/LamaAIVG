@@ -13,12 +13,12 @@ Since humans had left the Earth, centuries have passed and the blue Planet is no
 3. CPU with SSE2 instruction set support
 
 ## Download
-coming soon...
+http://www.maionemiky.it/Hypogeum.shtml
 
 
 ## IDE
 1. Visual Studio 2017 (http://visualstudio.microsoft.com)
-2. Unity 2018.1 (https://store.unity.com/download)
+2. Unity 2018.3.7 (http://store.unity.com/download)
 
 
 ## License
