@@ -86,6 +86,7 @@
      <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyServerEntry.cs" />
      <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyServerList.cs" />
      <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyTopPanel.cs" />
+     <Compile Include="Assets\Scripts\AI\FSM.cs" />
      <Compile Include="Assets\Scripts\Audio\AudioThroughScenes.cs" />
      <Compile Include="Assets\Scripts\Audio\PauseAudio.cs" />
      <Compile Include="Assets\Scripts\Audio\PlayAgainAudio.cs" />

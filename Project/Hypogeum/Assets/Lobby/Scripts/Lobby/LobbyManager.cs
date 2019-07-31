@@ -363,9 +363,14 @@ namespace Prototype.NetworkLobby
 
             switch (lobby_Player.gameType)
             {
+				//Changing the code to make spawn an AI-controlled car
                 case GB.EGameType.Driving:
                     var car = GB.LoadAnimalCar(lobby_Player.animal);
                     var car_instance = Instantiate(car, startPositions[conn.connectionId].position, Quaternion.identity);
+
+					//AIProject
+					var AIcar = GB.LoadAnimalCar(GB.EAnimal.Lion);
+					var AIcar_instance = Instantiate(AIcar, new Vector3(0, 0, 0), Quaternion.identity);
 
                     return car_instance;
 
