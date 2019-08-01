@@ -86,7 +86,16 @@
      <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyServerEntry.cs" />
      <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyServerList.cs" />
      <Compile Include="Assets\Lobby\Scripts\Lobby\LobbyTopPanel.cs" />
+     <Compile Include="Assets\Scripts\AI\CRBehaviuorTree.cs" />
      <Compile Include="Assets\Scripts\AI\FSM.cs" />
+     <Compile Include="Assets\Scripts\AI\FSMBehaviour.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\AvoidBehaviourVolume.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\DDelegatedSteering.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\DragBehaviour.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\FleeBehaviour.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\MovementBehaviour.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\MovementStatus.cs" />
+     <Compile Include="Assets\Scripts\AI\Movement\SeekBehaviour.cs" />
      <Compile Include="Assets\Scripts\Audio\AudioThroughScenes.cs" />
      <Compile Include="Assets\Scripts\Audio\PauseAudio.cs" />
      <Compile Include="Assets\Scripts\Audio\PlayAgainAudio.cs" />
