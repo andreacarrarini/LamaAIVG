@@ -1367,9 +1367,10 @@ GameObject:
   - component: {fileID: 6244733136456477538}
   - component: {fileID: 6747596662834500956}
   - component: {fileID: 6979976007927174624}
+  - component: {fileID: 2427118610407810275}
   - component: {fileID: 422517559910063052}
   m_Layer: 0
-  m_Name: LionsCarAI
+  m_Name: AICar
   m_TagString: car
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1645,9 +1646,9 @@ MonoBehaviour:
   coinRange: 20
   jumpRange: 10
   reactionTime: 0.5
-  targetTag: player
   coinTag: coin
   jumpTag: jumpPad
+  enemyCar: {fileID: 0}
 --- !u!114 &6244733136456477538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1696,6 +1697,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   linearDrag: 3
   angularDrag: 3
+--- !u!114 &2427118610407810275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9166404491640522105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 984ca0d6bcfa62f498b8e3856c966ad8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destination: {fileID: 0}
+  gas: 3
+  steer: 30
+  brake: 20
+  brakeAt: 5
+  stopAt: 0.01
 --- !u!114 &422517559910063052
 MonoBehaviour:
   m_ObjectHideFlags: 0
