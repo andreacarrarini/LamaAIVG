@@ -38,13 +38,14 @@ public class FSMBehaviour : MonoBehaviour
 	// Same
 	private bool mustKeepDistance = false;
 
+	// FSMState Attack Behaviour Tree
 	private CRBT.BehaviorTree AttackBT;
 
 	// General FSM
 	private FSM generalFSM;
 
 
-	// FSM CONDITIONS
+	#region FSM COndition
 	public bool EnemiesInRange()
 	{
 		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange) return true;
@@ -92,6 +93,7 @@ public class FSMBehaviour : MonoBehaviour
 		}
 		return false;
 	}
+	#endregion
 
 	// BT CONDITIONS
 	public bool MyResistanceGreaterThanHis()
@@ -102,7 +104,7 @@ public class FSMBehaviour : MonoBehaviour
 	}
 
 	// BT ACTIONS
-	// TODO stop the chase when the FSM change state by removing the enemyCar.transform from seekBeahaviour.destination
+
 	public bool Chase()
 	{
 		// To stop fleeing and start chasing
@@ -111,7 +113,6 @@ public class FSMBehaviour : MonoBehaviour
 		return true;
 	}
 
-	// TODO stop the flee when the FSM change state by removing the enemyCar.transform from fleeBeahaviour.destination
 	public bool KeepDistance()
 	{
 		// To stop chasing and start fleeing
@@ -143,9 +144,20 @@ public class FSMBehaviour : MonoBehaviour
 
 		AttackBT = new CRBT.BehaviorTree(sel1);
 
-		// General FSM
+		#region General FSM
+
+		#region FSM Transitions
+		FSMTransition t1 = new FSMTransition( EnemiesInRange );
+		FSMTransition t2 = new FSMTransition( NoEnemiesInRange );
+		FSMTransition t3 = new FSMTransition( CoinInRangeAndCoinNotTaken );
+		FSMTransition t4 = new FSMTransition( CoinTaken );
+		FSMTransition t5 = new FSMTransition( JumpInRangeAndHypeNotFull );
+		FSMTransition t6 = new FSMTransition( JumpTaken );
+		#endregion
+
+		#region FSM States
 		FSMState moveAroundMap = new FSMState();
-		// TODO define the action of moving around the map
+		// TODO define enter, stay and exit actions
 
 		FSMState jumpForHype = new FSMState();
 		// same
@@ -157,6 +169,22 @@ public class FSMBehaviour : MonoBehaviour
 		attack.stayActions.Add( AttackCRLauncher );
 		attack.exitActions.Add( stopAttackBT );
 
+		// Link states with transitions
+		moveAroundMap.AddTransition( t1, attack );
+		moveAroundMap.AddTransition( t3, pickCoin );
+		moveAroundMap.AddTransition( t5, jumpForHype );
+
+		pickCoin.AddTransition( t4, moveAroundMap );
+		pickCoin.AddTransition( t1, attack );
+
+		jumpForHype.AddTransition( t6, moveAroundMap );
+		jumpForHype.AddTransition( t1, attack );
+
+		attack.AddTransition( t2, moveAroundMap );
+		#endregion
+
+		generalFSM = new FSM( moveAroundMap );
+		#endregion
 	}
 
 	public IEnumerator AttackCR()
@@ -186,6 +214,15 @@ public class FSMBehaviour : MonoBehaviour
 				return go;
 		}
 		return null;
+	}
+
+	public IEnumerator MoveThroughFSM()
+	{
+		while(true)
+		{
+			generalFSM.Update();
+			yield return new WaitForSeconds( reactionTime );
+		}
 	}
 
     // Update is called once per frame
