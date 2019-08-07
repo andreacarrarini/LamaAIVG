@@ -6,7 +6,7 @@ public class FleeBehaviour : MovementBehaviour {
 
 	public Transform destination;
 
-	public float gas = 3f;
+	public float gas = 10f;
 	public float steer = 30f;
 	public float brake = 20f;
 

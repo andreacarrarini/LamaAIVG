@@ -13,7 +13,7 @@ using UnityEngine;
 
 public class FSMBehaviour : MonoBehaviour
 {
-	[Range(0f, 50f)] public float enemyRange = 500f;
+	[Range(0f, 1000f)] public float enemyRange = 500f;
 	[Range(0f, 50f)] public float coinRange = 20f;
 	[Range(0f, 50f)] public float jumpRange = 10f;
 	public float reactionTime = .5f;
@@ -109,17 +109,25 @@ public class FSMBehaviour : MonoBehaviour
 	public bool Chase()
 	{
 		// To stop fleeing and start chasing
-		fleeBehaviour.destination = null;
-		seekBehaviour.destination = enemyCar.transform;
-		return true;
+		if (MyResistanceGreaterThanHis())
+		{
+			fleeBehaviour.destination = null;
+			seekBehaviour.destination = enemyCar.transform;
+			return true;
+		}
+		return false;
 	}
 
 	public bool KeepDistance()
 	{
 		// To stop chasing and start fleeing
-		seekBehaviour.destination = null;
-		fleeBehaviour.destination = enemyCar.transform;
-		return true;
+		if (!MyResistanceGreaterThanHis())
+		{
+			seekBehaviour.destination = null;
+			fleeBehaviour.destination = enemyCar.transform;
+			return true;
+		}
+		return false;
 	}
 
 	// Start is called before the first frame update

@@ -7,7 +7,7 @@ using UnityEngine;
 public class DDelegatedSteering : MonoBehaviour {
 
 	public float minLinearSpeed = 0.5f;
-	public float maxLinearSpeed = 5f;
+	public float maxLinearSpeed = 180f;
 	public float maxAngularSpeed = 5f;
 
 	private MovementStatus status;
