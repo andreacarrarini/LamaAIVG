@@ -12,7 +12,7 @@ public class AvoidBehaviourVolume : MovementBehaviour {
 
 	public override Vector3 GetAcceleration (MovementStatus status) {
 
-		Collider collider = GetComponent<Collider> ();
+		Collider collider = GetComponentInChildren<Collider>();
 
 		bool leftHit = Physics.BoxCast (transform.position, 
 		                                collider.bounds.extents, 

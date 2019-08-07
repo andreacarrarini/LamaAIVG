@@ -13,7 +13,7 @@ using UnityEngine;
 
 public class FSMBehaviour : MonoBehaviour
 {
-	[Range(0f, 50f)] public float enemyRange = 40f;
+	[Range(0f, 50f)] public float enemyRange = 500f;
 	[Range(0f, 50f)] public float coinRange = 20f;
 	[Range(0f, 50f)] public float jumpRange = 10f;
 	public float reactionTime = .5f;
@@ -48,8 +48,9 @@ public class FSMBehaviour : MonoBehaviour
 	#region FSM COndition
 	public bool EnemiesInRange()
 	{
-		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange) return true;
-			return false;
+		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange)
+			return true;
+		return false;
 	}
 
 	public bool NoEnemiesInRange()
@@ -166,7 +167,7 @@ public class FSMBehaviour : MonoBehaviour
 		// same
 
 		FSMState attack = new FSMState();
-		attack.stayActions.Add( AttackCRLauncher );
+		attack.stayActions.Add( AttackLauncher );
 		attack.exitActions.Add( stopAttackBT );
 
 		// Link states with transitions
@@ -184,19 +185,29 @@ public class FSMBehaviour : MonoBehaviour
 		#endregion
 
 		generalFSM = new FSM( moveAroundMap );
+		StartCoroutine( MoveThroughFSM() );
 		#endregion
 	}
 
-	public IEnumerator AttackCR()
-	{
-		while (AttackBT.Step())
-			yield return new WaitForSeconds(reactionTime);
-	}
+	//public IEnumerator AttackCR()
+	//{
+	//	while (AttackBT.Step())
+	//		yield return new WaitForSeconds(reactionTime);
+	//}
 
-	// Wrapper just to add the coroutine to a FSMAction
-	public void AttackCRLauncher()
+	//// Wrapper just to add the coroutine to a FSMAction
+	//public void AttackCRLauncher()
+	//{
+	//	StartCoroutine( AttackCR() );
+	//}
+
+	public void AttackLauncher()
 	{
-		StartCoroutine( AttackCR() );
+		//while(AttackBT.Step())
+		//{
+			
+		//}
+		AttackBT.Step();
 	}
 
 	public void stopAttackBT()
@@ -216,6 +227,9 @@ public class FSMBehaviour : MonoBehaviour
 		return null;
 	}
 
+	// TODO trying to adapt to the BT slide by putting the FSM.update() in while condition as step() in the slide
+	// need to change FSM.update() from void to bool
+	// Edit: the coroutine needs to always cycle through the FSM ==> while(true) 
 	public IEnumerator MoveThroughFSM()
 	{
 		while(true)
@@ -230,5 +244,6 @@ public class FSMBehaviour : MonoBehaviour
     {
 		if (!enemyCar)
 			enemyCar = FindEnemy();
+		
     }
 }

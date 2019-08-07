@@ -29,6 +29,8 @@ TagManager:
   - CoinInstinct
   - CoinReason
   - Arena
+  - coin
+  - jumpPad
   layers:
   - Default
   - TransparentFX
