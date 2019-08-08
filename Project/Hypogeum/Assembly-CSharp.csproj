@@ -96,6 +96,7 @@
      <Compile Include="Assets\Scripts\AI\Movement\MovementBehaviour.cs" />
      <Compile Include="Assets\Scripts\AI\Movement\MovementStatus.cs" />
      <Compile Include="Assets\Scripts\AI\Movement\SeekBehaviour.cs" />
+     <Compile Include="Assets\Scripts\AI\Ribalta.cs" />
      <Compile Include="Assets\Scripts\Audio\AudioThroughScenes.cs" />
      <Compile Include="Assets\Scripts\Audio\PauseAudio.cs" />
      <Compile Include="Assets\Scripts\Audio\PlayAgainAudio.cs" />

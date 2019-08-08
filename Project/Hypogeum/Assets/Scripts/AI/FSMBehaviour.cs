@@ -146,10 +146,7 @@ public class FSMBehaviour : MonoBehaviour
 
 		CRBT.BTSequence seq1 = new CRBT.BTSequence(new CRBT.IBTTask[] { c1, a1 });
 
-		CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail(seq1);
-		CRBT.BTDecoratorUntilFail uf2 = new CRBT.BTDecoratorUntilFail(a2);
-
-		CRBT.BTSelector sel1 = new CRBT.BTSelector(new CRBT.IBTTask[] { uf1, uf2 });
+		CRBT.BTSelector sel1 = new CRBT.BTSelector(new CRBT.IBTTask[] { seq1, a2 });
 
 		AttackBT = new CRBT.BehaviorTree(sel1);
 

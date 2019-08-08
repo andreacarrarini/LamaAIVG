@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AvoidBehaviourVolume : MovementBehaviour {
 
-	public float sightRange = 5f;
+	public float sightRange = 60f;
 	public float sightAngle = 45f;
 
 	public float steer = 15f;

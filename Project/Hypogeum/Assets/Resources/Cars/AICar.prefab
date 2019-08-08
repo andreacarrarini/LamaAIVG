@@ -153,8 +153,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 24
   m_SuspensionSpring:
-    spring: 160763.7
-    damper: 48229.113
+    spring: 160763.73
+    damper: 48229.117
     targetPosition: 0.5
   m_SuspensionDistance: 0.049050003
   m_ForceAppPointDistance: 23.454885
@@ -1234,7 +1234,7 @@ WheelCollider:
     spring: 160982.86
     damper: 48294.86
     targetPosition: 0.5
-  m_SuspensionDistance: 0.049050007
+  m_SuspensionDistance: 0.049050003
   m_ForceAppPointDistance: 23.454885
   m_Mass: 9
   m_WheelDampingRate: 0.25
@@ -1369,6 +1369,7 @@ GameObject:
   - component: {fileID: 6979976007927174624}
   - component: {fileID: 2427118610407810275}
   - component: {fileID: 422517559910063052}
+  - component: {fileID: 6473516785114481586}
   m_Layer: 0
   m_Name: AICar
   m_TagString: car
@@ -1730,6 +1731,18 @@ MonoBehaviour:
   minLinearSpeed: 0.5
   maxLinearSpeed: 180
   maxAngularSpeed: 5
+--- !u!114 &6473516785114481586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9166404491640522105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcfea439b4e9ca548a2e46364b4a6356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9184946469077461324
 GameObject:
   m_ObjectHideFlags: 0
@@ -1953,6 +1966,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8772562477935072277, guid: 8083a620052ffa443be74dbd166eed72,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8772562477934839861, guid: 8083a620052ffa443be74dbd166eed72,
         type: 3}
