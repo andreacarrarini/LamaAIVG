@@ -19,6 +19,7 @@ public class FSMBehaviour : MonoBehaviour
 	public float reactionTime = .5f;
 	public string coinTag = "coin";
 	public string jumpTag = "jumpPad";
+	private GameObject coinInRange = null;
 
 	public GameObject enemyCar = null;
 	private GeneralCar generalCar;
@@ -62,7 +63,11 @@ public class FSMBehaviour : MonoBehaviour
 	{
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag(coinTag))
 		{
-			if (((go.transform.position - transform.position).magnitude <= enemyRange) && !coinTaken) return true;
+			if (((go.transform.position - transform.position).magnitude <= coinRange) && !coinTaken)
+			{
+				coinInRange = go;
+				return true;
+			}
 		}
 		return false;
 	}
@@ -80,7 +85,7 @@ public class FSMBehaviour : MonoBehaviour
 	{
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag(jumpTag))
 		{
-			if (((go.transform.position - transform.position).magnitude <= enemyRange) && (generalCar.Hype < maxHypeValue))
+			if (((go.transform.position - transform.position).magnitude <= jumpRange) && (generalCar.Hype < maxHypeValue))
 				return true;
 		}
 		return false;
@@ -130,6 +135,11 @@ public class FSMBehaviour : MonoBehaviour
 		return false;
 	}
 
+	public bool MoveToRamp()
+	{
+		return true;
+	}
+
 	// Start is called before the first frame update
 	void Start()
     {
@@ -149,6 +159,9 @@ public class FSMBehaviour : MonoBehaviour
 		CRBT.BTSelector sel1 = new CRBT.BTSelector(new CRBT.IBTTask[] { seq1, a2 });
 
 		AttackBT = new CRBT.BehaviorTree(sel1);
+
+		// Pick Coin BT
+
 
 		#region General FSM
 

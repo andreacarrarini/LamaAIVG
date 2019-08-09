@@ -7,8 +7,8 @@ public class AvoidBehaviourVolume : MovementBehaviour {
 	public float sightRange = 60f;
 	public float sightAngle = 45f;
 
-	public float steer = 15f;
-	public float backpedal = 10f;
+	public float steer = 25f;
+	public float backpedal = 20f;
 
 	public override Vector3 GetAcceleration (MovementStatus status) {
 
