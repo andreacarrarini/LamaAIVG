@@ -50,13 +50,5 @@ public class DDelegatedSteering : MonoBehaviour {
 
 			status.movementDirection = transform.forward;
 		}
-
 	}
-
-	private void OnDrawGizmos () {
-		if (status != null) {
-			UnityEditor.Handles.Label (transform.position + 2f * transform.up, status.linearSpeed.ToString () + "\n" + status.angularSpeed.ToString ());
-		}
-	}
-
 }

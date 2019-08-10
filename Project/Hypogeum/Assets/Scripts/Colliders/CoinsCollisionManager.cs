@@ -25,13 +25,22 @@ public class CoinsCollisionManager : MonoBehaviour
         gameObject.transform.RotateAroundLocal(Vector3.up, 2 * Time.deltaTime);
     }
 
+	// Changed for the AI
     private void OnTriggerEnter(Collider otherObjectCollider)
     {
         GB.ECoin? tipo = null;
 
-        if (gameObject.CompareTag("CoinReason"))
+		// AI part
+		var gobj = otherObjectCollider.attachedRigidbody.gameObject;
+		if (gobj.name == "AICar(Clone)")
+		{
+			gobj.GetComponent<FSMBehaviour>().CoinTaken = true;
+			Destroy( gameObject );
+		}
+
+        if (gameObject.name == "CoinReason(Clone)")
             tipo = GB.ECoin.Reason;
-        else if (gameObject.CompareTag("CoinInstinct"))
+        else if (gameObject.name == "CoinInstinct(Clone)")
             tipo = GB.ECoin.Instinct;
 
         if (tipo.HasValue)

@@ -16,15 +16,17 @@ public class FSMBehaviour : MonoBehaviour
 	[Range(0f, 1000f)] public float enemyRange = 500f;
 	[Range(0f, 50f)] public float coinRange = 20f;
 	[Range(0f, 50f)] public float jumpRange = 10f;
+	[Range(0f, 50f)] public float padDistance = 10f;
 	public float reactionTime = .5f;
 	public string coinTag = "coin";
 	public string jumpTag = "jumpPad";
-	private GameObject coinInRange = null;
 
 	public GameObject enemyCar = null;
 	private GeneralCar generalCar;
 	private SeekBehaviour seekBehaviour;
 	private FleeBehaviour fleeBehaviour;
+	private GameObject nearestJumpPad = null;
+	private GameObject nearestCoin = null;
 
 	private float maxHypeValue = 1000f;
 	private bool coinTaken = false;
@@ -45,6 +47,9 @@ public class FSMBehaviour : MonoBehaviour
 	// General FSM
 	private FSM generalFSM;
 
+	// Property for coinTaken
+	public bool CoinTaken { get => coinTaken; set => coinTaken = value; }
+
 
 	#region FSM COndition
 	public bool EnemiesInRange()
@@ -63,18 +68,18 @@ public class FSMBehaviour : MonoBehaviour
 	{
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag(coinTag))
 		{
-			if (((go.transform.position - transform.position).magnitude <= coinRange) && !coinTaken)
+			if (((go.transform.position - transform.position).magnitude <= coinRange) && !CoinTaken)
 			{
-				coinInRange = go;
+				nearestCoin = go;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public bool CoinTaken()
+	public bool CoinTakenCondition()
 	{
-		if (coinTaken)
+		if (CoinTaken)
 		{
 			return true;
 		}
@@ -135,9 +140,60 @@ public class FSMBehaviour : MonoBehaviour
 		return false;
 	}
 
+	// Cndition for an Until Fail
+	public bool DistanceFromPad()
+	{
+		if ( (nearestJumpPad.transform.position - gameObject.transform.position).magnitude > padDistance )
+			return true;
+		return false;
+	}
+
 	public bool MoveToRamp()
 	{
+		seekBehaviour.destination = nearestJumpPad.transform;
 		return true;
+	}
+
+	public bool MoveToCoin()
+	{
+		seekBehaviour.destination = nearestCoin.transform;
+		return true;
+	}
+
+	// To know from where the coin is accessible and to move to the base of the correct ramp
+	public bool FromCoinToRamp()
+	{
+		float minDistance = 500f;
+		GameObject nearestCoin = null;
+
+		foreach (GameObject go in GameObject.FindGameObjectsWithTag(coinTag))
+		{
+			if ((go.transform.position - gameObject.transform.position).magnitude < minDistance)
+			{
+				minDistance = (go.transform.position - gameObject.transform.position).magnitude;
+				nearestCoin = go;
+			}
+		}
+
+		switch (Mathf.Ceil(nearestCoin.transform.position.y))
+		{
+			case 6:
+				nearestJumpPad = GameObject.Find( "DragonPad" );
+				break;
+			case 17:
+				nearestJumpPad = GameObject.Find( "WoodPad" );
+				break;
+			case 22:
+				nearestJumpPad = GameObject.Find( "StonePad" );
+				break;
+			case 40:
+				nearestJumpPad = GameObject.Find( "BigPad" );
+				break;
+		}
+
+		if ( !nearestJumpPad )
+			return true;
+		return false;
 	}
 
 	// Start is called before the first frame update
@@ -161,7 +217,7 @@ public class FSMBehaviour : MonoBehaviour
 		AttackBT = new CRBT.BehaviorTree(sel1);
 
 		// Pick Coin BT
-
+		// TODO
 
 		#region General FSM
 
@@ -169,7 +225,7 @@ public class FSMBehaviour : MonoBehaviour
 		FSMTransition t1 = new FSMTransition( EnemiesInRange );
 		FSMTransition t2 = new FSMTransition( NoEnemiesInRange );
 		FSMTransition t3 = new FSMTransition( CoinInRangeAndCoinNotTaken );
-		FSMTransition t4 = new FSMTransition( CoinTaken );
+		FSMTransition t4 = new FSMTransition( CoinTakenCondition );
 		FSMTransition t5 = new FSMTransition( JumpInRangeAndHypeNotFull );
 		FSMTransition t6 = new FSMTransition( JumpTaken );
 		#endregion
