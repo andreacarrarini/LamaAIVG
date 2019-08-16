@@ -150,7 +150,7 @@ public class FSMBehaviour : MonoBehaviour
 
 	public bool MoveToRamp()
 	{
-		seekBehaviour.destination = nearestJumpPad.transform;
+        seekBehaviour.destination = nearestJumpPad.transform;
 		return true;
 	}
 
@@ -277,10 +277,6 @@ public class FSMBehaviour : MonoBehaviour
 
 	public void AttackLauncher()
 	{
-		//while(AttackBT.Step())
-		//{
-			
-		//}
 		AttackBT.Step();
 	}
 

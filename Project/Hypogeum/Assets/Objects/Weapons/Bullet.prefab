@@ -181,6 +181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 100
+  AnimaleCheHaSparatoQuestoColpo: 0
 --- !u!114 &5940688877415640503
 MonoBehaviour:
   m_ObjectHideFlags: 0
