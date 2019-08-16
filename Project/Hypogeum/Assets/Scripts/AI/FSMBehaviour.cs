@@ -13,20 +13,20 @@ using UnityEngine;
 
 public class FSMBehaviour : MonoBehaviour
 {
-	[Range(0f, 1000f)] public float enemyRange = 500f;
-	[Range(0f, 1000f)] public float coinRange = 20f;
-	[Range(0f, 50f)] public float jumpRange = 10f;
-	[Range(0f, 50f)] public float padDistance = 10f;
+	[Range(0f, 1000f)] public float enemyRange;
+	[Range(0f, 10000f)] public float coinRange;
+	[Range(0f, 50f)] public float jumpRange;
+	[Range(0f, 50f)] public float padDistance;
 	public float reactionTime = .5f;
-	public string coinTag = "coin";
-	public string jumpTag = "jumpPad";
+	private string coinTag = "coin";
+	private string jumpTag = "jumpPad";
 
 	private GameObject enemyCar = null;
 	private GeneralCar generalCar;
 	private SeekBehaviour seekBehaviour;
 	private FleeBehaviour fleeBehaviour;
-	private GameObject nearestJumpPad = null;
-	private GameObject nearestCoin = null;
+	public GameObject nearestJumpPad = null;
+	public GameObject nearestCoin = null;
 
 	private float maxHypeValue = 1000f;
 	private bool coinTaken = false;
@@ -52,6 +52,9 @@ public class FSMBehaviour : MonoBehaviour
 
 	// Property for coinTaken
 	public bool CoinTaken { get => coinTaken; set => coinTaken = value; }
+
+    // List of ramps in the arena
+    private GameObject[] ramps;
 
 
 	#region FSM COndition
@@ -151,14 +154,20 @@ public class FSMBehaviour : MonoBehaviour
 		return false;
 	}
 
-	public bool MoveToRamp()
-	{
+    public bool MoveToRamp()
+    {
         seekBehaviour.destination = nearestJumpPad.transform;
-		return true;
-	}
+        return true;
+    }
 
-	public bool MoveToCoin()
+    public bool MoveToCoin()
 	{
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("ramp"))
+        {
+            // Ignore Raycast
+            go.layer = 2;
+        }
+
 		seekBehaviour.destination = nearestCoin.transform;
 		return true;
 	}
@@ -194,10 +203,15 @@ public class FSMBehaviour : MonoBehaviour
 				break;
 		}
 
-		if ( !nearestJumpPad )
+		if ( nearestJumpPad )
 			return true;
 		return false;
 	}
+
+    public void IgnoreRaycsatPickCoin()
+    {
+
+    }
 
 	// Start is called before the first frame update
 	void Start()
@@ -206,6 +220,7 @@ public class FSMBehaviour : MonoBehaviour
 		generalCar = gameObject.GetComponent<GeneralCar>();
 		seekBehaviour = gameObject.GetComponent<SeekBehaviour>();
 		fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
+        
 
 		// Atack BT
 		CRBT.BTAction a1 = new CRBT.BTAction( Chase );
@@ -230,6 +245,8 @@ public class FSMBehaviour : MonoBehaviour
         CRBT.BTAction a5 = new CRBT.BTAction( MoveToCoin );
 
         CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { a3, a4, uf1, a5 } );
+
+        PickCoinBT = new CRBT.BehaviorTree( seq2 );
 
 		#region General FSM
 
@@ -285,7 +302,7 @@ public class FSMBehaviour : MonoBehaviour
     {
         seekBehaviour.destination = null;
         nearestCoin = null;
-        nearestCoin = null;
+        //nearestJumpPad = null;
     }
 
 	public void AttackLauncher()

@@ -1643,14 +1643,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebd8d272c3390c548a58e9fd46a1d10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyRange: 56
-  coinRange: 1000
+  enemyRange: 22
+  coinRange: 10000
   jumpRange: 12
   padDistance: 10
   reactionTime: 0.5
-  coinTag: coin
-  jumpTag: jumpPad
-  enemyCar: {fileID: 0}
+  nearestJumpPad: {fileID: 0}
+  nearestCoin: {fileID: 0}
 --- !u!114 &6244733136456477538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1663,9 +1662,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bbf769209b90d443bcf1a05fbcb6661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sightRange: 5
+  sightRange: 50
   sightAngle: 45
-  steer: 15
+  steer: 50
   backpedal: 10
 --- !u!114 &6747596662834500956
 MonoBehaviour:
@@ -1680,7 +1679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {fileID: 0}
-  gas: 10
+  gas: 20
   steer: 30
   brake: 20
   brakeAt: 95
@@ -1712,7 +1711,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {fileID: 0}
-  gas: 10
+  gas: 20
   steer: 30
   brake: 20
   brakeAt: 5
@@ -2043,16 +2042,16 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 12
       objectReference: {fileID: 0}
-    - target: {fileID: 8772562477933071061, guid: 8083a620052ffa443be74dbd166eed72,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 084e1751f3ec6ef43803fe095b2a3efc, type: 2}
     - target: {fileID: 8772562477942368213, guid: 8083a620052ffa443be74dbd166eed72,
         type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8772562477933071061, guid: 8083a620052ffa443be74dbd166eed72,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 084e1751f3ec6ef43803fe095b2a3efc, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8083a620052ffa443be74dbd166eed72, type: 3}
 --- !u!4 &835941391244086648 stripped
