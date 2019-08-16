@@ -6,12 +6,12 @@ public class FleeBehaviour : MovementBehaviour {
 
 	public Transform destination;
 
-	public float gas = 10f;
-	public float steer = 30f;
-	public float brake = 20f;
+	public float gas;
+	public float steer;
+	public float brake;
 
-	public float brakeAt = 95f;
-	public float stopAt = 100f;
+	public float brakeAt;
+	public float stopAt;
 
 	public override Vector3 GetAcceleration (MovementStatus status) {
 		if (destination != null) {

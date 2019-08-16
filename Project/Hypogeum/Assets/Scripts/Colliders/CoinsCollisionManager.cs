@@ -35,7 +35,14 @@ public class CoinsCollisionManager : MonoBehaviour
 		if (gobj.name == "AICar(Clone)")
 		{
 			gobj.GetComponent<FSMBehaviour>().CoinTaken = true;
-			Destroy( gameObject );
+
+            foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
+            {
+                // Ignore Raycast
+                go.layer = 0;
+            }
+
+            Destroy( gameObject );
 		}
 
         if (gameObject.name == "CoinReason(Clone)")

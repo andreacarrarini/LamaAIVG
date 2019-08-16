@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class AvoidBehaviourVolume : MovementBehaviour {
 
-	public float sightRange = 60f;
-	public float sightAngle = 45f;
+	public float sightRange;
+	public float sightAngle;
 
-	public float steer = 25f;
-	public float backpedal = 20f;
+	public float steer;
+	public float backpedal;
 
 	public override Vector3 GetAcceleration (MovementStatus status) {
 

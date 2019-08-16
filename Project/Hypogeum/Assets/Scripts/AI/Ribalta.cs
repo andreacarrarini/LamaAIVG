@@ -17,17 +17,28 @@ public class Ribalta : MonoBehaviour
 	void Start()
     {
 		AICarTransform = gameObject.transform;
+        StartCoroutine( Riposiziona() );
     }
 
     // Update is called once per frame
     void Update()
     {
-		int zRotation = (int) Mathf.Ceil(AICarTransform.rotation.eulerAngles.z);
 
-		if (MathMod( zRotation, 360 ) < 190 && (MathMod( zRotation, 360 ) > 155))
-		{
-			Vector3 respawnPosition = AICarTransform.position;
-			AICarTransform.SetPositionAndRotation( new Vector3( respawnPosition.x, 0, respawnPosition.z ), new Quaternion(0, 0, 0, 0) );
-		}
+    }
+
+    public IEnumerator Riposiziona()
+    {
+        while ( true )
+        {
+            yield return new WaitForSeconds( 4 );
+
+            int zRotation = ( int ) Mathf.Ceil( AICarTransform.rotation.eulerAngles.z );
+
+            if ( MathMod( zRotation, 360 ) < 190 && (MathMod( zRotation, 360 ) > 155) )
+            {
+                Vector3 respawnPosition = AICarTransform.position;
+                AICarTransform.SetPositionAndRotation( new Vector3( respawnPosition.x, 0, respawnPosition.z ), new Quaternion( 0, 0, 0, 0 ) );
+            }
+        }
     }
 }
