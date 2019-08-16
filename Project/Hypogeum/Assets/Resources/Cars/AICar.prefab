@@ -153,8 +153,8 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 24
   m_SuspensionSpring:
-    spring: 160763.73
-    damper: 48229.117
+    spring: 160763.7
+    damper: 48229.113
     targetPosition: 0.5
   m_SuspensionDistance: 0.049050003
   m_ForceAppPointDistance: 23.454885
@@ -1234,7 +1234,7 @@ WheelCollider:
     spring: 160982.86
     damper: 48294.86
     targetPosition: 0.5
-  m_SuspensionDistance: 0.049050003
+  m_SuspensionDistance: 0.049050007
   m_ForceAppPointDistance: 23.454885
   m_Mass: 9
   m_WheelDampingRate: 0.25
@@ -1643,9 +1643,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebd8d272c3390c548a58e9fd46a1d10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyRange: 500
-  coinRange: 20
-  jumpRange: 10
+  enemyRange: 56
+  coinRange: 1000
+  jumpRange: 12
+  padDistance: 10
   reactionTime: 0.5
   coinTag: coin
   jumpTag: jumpPad

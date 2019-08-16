@@ -59,8 +59,8 @@ public class CoinsCollisionManager : MonoBehaviour
                 animale = b.AnimaleCheHaSparatoQuestoColpo;
             }
 
-            if (animale.HasValue)
-                instinctReasonManager.Cmd_server_OnCoinChosed(animale.Value, tipo.Value, gameObject);
+            if ( animale.HasValue )
+                instinctReasonManager.Cmd_server_OnCoinChosed( animale.Value, tipo.Value, gameObject );
         }
 
     }

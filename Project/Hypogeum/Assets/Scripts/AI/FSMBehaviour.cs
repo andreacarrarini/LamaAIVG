@@ -14,14 +14,14 @@ using UnityEngine;
 public class FSMBehaviour : MonoBehaviour
 {
 	[Range(0f, 1000f)] public float enemyRange = 500f;
-	[Range(0f, 50f)] public float coinRange = 20f;
+	[Range(0f, 1000f)] public float coinRange = 20f;
 	[Range(0f, 50f)] public float jumpRange = 10f;
 	[Range(0f, 50f)] public float padDistance = 10f;
 	public float reactionTime = .5f;
 	public string coinTag = "coin";
 	public string jumpTag = "jumpPad";
 
-	public GameObject enemyCar = null;
+	private GameObject enemyCar = null;
 	private GeneralCar generalCar;
 	private SeekBehaviour seekBehaviour;
 	private FleeBehaviour fleeBehaviour;
@@ -43,6 +43,9 @@ public class FSMBehaviour : MonoBehaviour
 
 	// FSMState Attack Behaviour Tree
 	private CRBT.BehaviorTree AttackBT;
+
+    // FMState Pick COin Behaviour Tree
+    private CRBT.BehaviorTree PickCoinBT;
 
 	// General FSM
 	private FSM generalFSM;
@@ -140,7 +143,7 @@ public class FSMBehaviour : MonoBehaviour
 		return false;
 	}
 
-	// Cndition for an Until Fail
+	// Condition for an Until Fail
 	public bool DistanceFromPad()
 	{
 		if ( (nearestJumpPad.transform.position - gameObject.transform.position).magnitude > padDistance )
@@ -163,7 +166,7 @@ public class FSMBehaviour : MonoBehaviour
 	// To know from where the coin is accessible and to move to the base of the correct ramp
 	public bool FromCoinToRamp()
 	{
-		float minDistance = 500f;
+		float minDistance = 100000f;
 		GameObject nearestCoin = null;
 
 		foreach (GameObject go in GameObject.FindGameObjectsWithTag(coinTag))
@@ -178,16 +181,16 @@ public class FSMBehaviour : MonoBehaviour
 		switch (Mathf.Ceil(nearestCoin.transform.position.y))
 		{
 			case 6:
-				nearestJumpPad = GameObject.Find( "DragonPad" );
+				nearestJumpPad = GameObject.Find( "DragonBasePad" );
 				break;
 			case 17:
-				nearestJumpPad = GameObject.Find( "WoodPad" );
+				nearestJumpPad = GameObject.Find( "WoodBasePad" );
 				break;
 			case 22:
-				nearestJumpPad = GameObject.Find( "StonePad" );
+				nearestJumpPad = GameObject.Find( "StoneBasePad" );
 				break;
 			case 40:
-				nearestJumpPad = GameObject.Find( "BigPad" );
+				nearestJumpPad = GameObject.Find( "BigBasePad" );
 				break;
 		}
 
@@ -205,19 +208,28 @@ public class FSMBehaviour : MonoBehaviour
 		fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
 
 		// Atack BT
-		CRBT.BTAction a1 = new CRBT.BTAction(Chase);
-		CRBT.BTAction a2 = new CRBT.BTAction(KeepDistance);
+		CRBT.BTAction a1 = new CRBT.BTAction( Chase );
+		CRBT.BTAction a2 = new CRBT.BTAction( KeepDistance );
 
-		CRBT.BTCondition c1 = new CRBT.BTCondition(MyResistanceGreaterThanHis);
+		CRBT.BTCondition c1 = new CRBT.BTCondition( MyResistanceGreaterThanHis );
 
-		CRBT.BTSequence seq1 = new CRBT.BTSequence(new CRBT.IBTTask[] { c1, a1 });
+		CRBT.BTSequence seq1 = new CRBT.BTSequence( new CRBT.IBTTask[] { c1, a1 }) ;
 
-		CRBT.BTSelector sel1 = new CRBT.BTSelector(new CRBT.IBTTask[] { seq1, a2 });
+		CRBT.BTSelector sel1 = new CRBT.BTSelector( new CRBT.IBTTask[] { seq1, a2 } );
 
-		AttackBT = new CRBT.BehaviorTree(sel1);
+		AttackBT = new CRBT.BehaviorTree( sel1 );
 
-		// Pick Coin BT
-		// TODO
+        // Pick Coin BT
+        CRBT.BTAction a3 = new CRBT.BTAction( FromCoinToRamp );
+        CRBT.BTAction a4 = new CRBT.BTAction( MoveToRamp );
+
+        CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromPad );
+
+        CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
+
+        CRBT.BTAction a5 = new CRBT.BTAction( MoveToCoin );
+
+        CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { a3, a4, uf1, a5 } );
 
 		#region General FSM
 
@@ -238,11 +250,12 @@ public class FSMBehaviour : MonoBehaviour
 		// same
 
 		FSMState pickCoin = new FSMState();
-		// same
+        pickCoin.stayActions.Add( PickCoinLauncher );
+        pickCoin.exitActions.Add( StopPickCoinBT );
 
 		FSMState attack = new FSMState();
 		attack.stayActions.Add( AttackLauncher );
-		attack.exitActions.Add( stopAttackBT );
+		attack.exitActions.Add( StopAttackBT );
 
 		// Link states with transitions
 		moveAroundMap.AddTransition( t1, attack );
@@ -263,24 +276,24 @@ public class FSMBehaviour : MonoBehaviour
 		#endregion
 	}
 
-	//public IEnumerator AttackCR()
-	//{
-	//	while (AttackBT.Step())
-	//		yield return new WaitForSeconds(reactionTime);
-	//}
+    public void PickCoinLauncher()
+    {
+        PickCoinBT.Step();
+    }
 
-	//// Wrapper just to add the coroutine to a FSMAction
-	//public void AttackCRLauncher()
-	//{
-	//	StartCoroutine( AttackCR() );
-	//}
+    public void StopPickCoinBT()
+    {
+        seekBehaviour.destination = null;
+        nearestCoin = null;
+        nearestCoin = null;
+    }
 
 	public void AttackLauncher()
 	{
 		AttackBT.Step();
 	}
 
-	public void stopAttackBT()
+	public void StopAttackBT()
 	{
 		seekBehaviour.destination = null;
 		fleeBehaviour.destination = null;
