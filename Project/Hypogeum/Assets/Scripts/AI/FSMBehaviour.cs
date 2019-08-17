@@ -56,6 +56,9 @@ public class FSMBehaviour : MonoBehaviour
     // List of ramps in the arena
     private GameObject[] ramps;
 
+    // To try to avoid the condition checking distance in the UF of PicoCoinBT
+    private bool basePadReached = false;
+
 
 	#region FSM COndition
 	public bool EnemiesInRange()
@@ -157,7 +160,9 @@ public class FSMBehaviour : MonoBehaviour
     public bool MoveToRamp()
     {
         seekBehaviour.destination = nearestJumpPad.transform;
-        return true;
+
+        // It was true
+        return false;
     }
 
     public bool MoveToCoin()
@@ -187,23 +192,23 @@ public class FSMBehaviour : MonoBehaviour
 			}
 		}
 
-		switch (Mathf.Ceil(nearestCoin.transform.position.y))
-		{
-			case 6:
-				nearestJumpPad = GameObject.Find( "DragonBasePad" );
-				break;
-			case 17:
-				nearestJumpPad = GameObject.Find( "WoodBasePad" );
-				break;
-			case 22:
-				nearestJumpPad = GameObject.Find( "StoneBasePad" );
-				break;
-			case 40:
-				nearestJumpPad = GameObject.Find( "BigBasePad" );
-				break;
-		}
+        switch ( Mathf.Ceil( nearestCoin.transform.position.y ) )
+        {
+            case 6:
+                nearestJumpPad = GameObject.Find( "DragonBasePad" );
+                break;
+            case 17:
+                nearestJumpPad = GameObject.Find( "WoodBasePad" );
+                break;
+            case 22:
+                nearestJumpPad = GameObject.Find( "StoneBasePad" );
+                break;
+            case 40:
+                nearestJumpPad = GameObject.Find( "BigBasePad" );
+                break;
+        }
 
-		if ( nearestJumpPad )
+        if ( nearestJumpPad )
 			return true;
 		return false;
 	}
@@ -211,6 +216,22 @@ public class FSMBehaviour : MonoBehaviour
     public void IgnoreRaycsatPickCoin()
     {
 
+    }
+
+    // Not anymore for an Until Fail, now it's for a Selector
+    public bool BasePadReached()
+    {
+        if ( basePadReached )
+            return true;
+        return false;
+    }
+
+    // For the first Selector in the Pick Coin BT
+    public bool NearestPadFound()
+    {
+        if ( nearestJumpPad )
+            return true;
+        return false;
     }
 
 	// Start is called before the first frame update
@@ -239,12 +260,21 @@ public class FSMBehaviour : MonoBehaviour
         CRBT.BTAction a4 = new CRBT.BTAction( MoveToRamp );
 
         CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromPad );
+        CRBT.BTCondition c3 = new CRBT.BTCondition( BasePadReached );
+        CRBT.BTCondition c4 = new CRBT.BTCondition( NearestPadFound );
 
-        CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
+        //CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
+        //CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c3 );
+
+        // Selector try
+        CRBT.BTSelector sel2 = new CRBT.BTSelector( new CRBT.IBTTask[] { c3, a4 } );
+
+        CRBT.BTSelector sel3 = new CRBT.BTSelector( new CRBT.IBTTask[] { c4, a3 } );
 
         CRBT.BTAction a5 = new CRBT.BTAction( MoveToCoin );
 
-        CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { a3, a4, uf1, a5 } );
+        //CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { a3, a4, uf1, a5 } );
+        CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { sel3, sel2, a5 } );
 
         PickCoinBT = new CRBT.BehaviorTree( seq2 );
 
@@ -339,11 +369,20 @@ public class FSMBehaviour : MonoBehaviour
 		}
 	}
 
+    public void IfBaseBadReached()
+    {
+        if ( nearestJumpPad )
+        {
+            if ( !DistanceFromPad() )
+                basePadReached = true;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
 		if (!enemyCar)
 			enemyCar = FindEnemy();
-		
+        IfBaseBadReached(); 		
     }
 }
