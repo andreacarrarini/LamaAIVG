@@ -32,6 +32,7 @@ TagManager:
   - coin
   - jumpPad
   - ramp
+  - basePad
   layers:
   - Default
   - TransparentFX
