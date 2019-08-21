@@ -4,18 +4,38 @@ using UnityEngine;
 
 [RequireComponent (typeof (Rigidbody))]
 
+//TODO Ensure that the car doesn't start flying, especially on ramps
 public class DDelegatedSteering : MonoBehaviour {
 
 	public float minLinearSpeed = 0.5f;
-	public float maxLinearSpeed = 180f;
+    [Range( 0f, 1000f )] public float maxLinearSpeed = 180f;
 	public float maxAngularSpeed = 5f;
 
 	private MovementStatus status;
 
-	private void Start () {
+    private WheelCollider[] wheels = new WheelCollider[ 4 ];
+
+    private void Start () {
 		status = new MovementStatus ();
 		status.movementDirection = transform.forward;
-	}
+
+        var i = 0u;
+        var wc = GetComponentsInChildren<WheelCollider>();
+        var obj_figli = GetComponentsInChildren<MeshRenderer>();
+
+        foreach ( var w in wc )
+        {
+            foreach ( var o in obj_figli )
+                if ( o.gameObject.name.Equals( $"Wheel_{w.name}" ) )
+                {
+                    wheels[ i ] = w;
+                    break;
+                }
+
+            i++;
+        }
+
+    }
 
 	void FixedUpdate () {
 
@@ -45,8 +65,25 @@ public class DDelegatedSteering : MonoBehaviour {
 			status.angularSpeed = Mathf.Clamp (status.angularSpeed, -maxAngularSpeed, maxAngularSpeed);
 
 			Rigidbody rb = GetComponent<Rigidbody> ();
-			rb.MovePosition (rb.position + transform.forward * tangentDelta);
-			rb.MoveRotation (rb.rotation * Quaternion.Euler (0f, rotationDelta, 0f));
+
+            // Apply movement only if at least 3 of 4 wheels are on the ground
+            int wheelsOnTheGround = 0;
+
+            foreach (WheelCollider wheelCollider in wheels)
+            {
+                if ( wheelCollider.isGrounded )
+                    wheelsOnTheGround += 1;
+            }
+
+            if (wheelsOnTheGround >= 0)
+            {
+                rb.MovePosition( rb.position + transform.forward * tangentDelta );
+                rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
+
+                //status.movementDirection = transform.forward;
+            }
+			//rb.MovePosition (rb.position + transform.forward * tangentDelta);
+			//rb.MoveRotation (rb.rotation * Quaternion.Euler (0f, rotationDelta, 0f));
 
 			status.movementDirection = transform.forward;
 		}

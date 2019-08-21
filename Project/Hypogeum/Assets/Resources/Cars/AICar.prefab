@@ -1648,8 +1648,10 @@ MonoBehaviour:
   jumpRange: 12
   padDistance: 10
   reactionTime: 0.5
+  nearestBasePad: {fileID: 0}
   nearestJumpPad: {fileID: 0}
   nearestCoin: {fileID: 0}
+  basePadReached: 0
 --- !u!114 &6244733136456477538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1662,7 +1664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bbf769209b90d443bcf1a05fbcb6661, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sightRange: 50
+  sightRange: 100
   sightAngle: 45
   steer: 50
   backpedal: 10
@@ -1729,7 +1731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minLinearSpeed: 0.5
-  maxLinearSpeed: 180
+  maxLinearSpeed: 101
   maxAngularSpeed: 5
 --- !u!114 &6473516785114481586
 MonoBehaviour:

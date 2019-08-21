@@ -159,22 +159,19 @@ public class FSMBehaviour : MonoBehaviour
 		return false;
 	}
 
+    // Action to make the car go to the base of the ramp
     public bool MoveToRamp()
     {
         seekBehaviour.destination = nearestBasePad.transform;
-        
-        //if ( BasePadReached() )
-        //    return true;
-        //// It was true
-        //return false;
+
         return BasePadReached();
     }
 
-    //public IEnumerator WaitForCoin()
-    //{
-    //    yield return new WaitForSeconds( 2f );
-    //    basePadReached = false;
-    //}
+    public bool WaitForCoin()
+    {
+        basePadReached = false;
+        return true;
+    }
 
     //TODO Give the Car enough time to reach the coin before the FSM State lauch again the BT
     public bool MoveToCoin()
@@ -186,8 +183,15 @@ public class FSMBehaviour : MonoBehaviour
         }
 
 		seekBehaviour.destination = nearestJumpPad.transform;
-        //StartCoroutine( WaitForCoin() );
-		return true;
+
+        // To give enough time to the car to pick the coin
+        //float wait = 20f;
+        //while ( (wait -= Time.deltaTime) > 0 ) ;
+        //basePadReached = false;
+
+        //bool retValue = 
+        Invoke( "WaitForCoin", 5 );
+        return true;
 	}
 
 	// To know from where the coin is accessible and to move to the base of the correct ramp
