@@ -191,6 +191,11 @@ public static class GB
 		return Resources.Load( "Cars/AICar" ) as GameObject;
 	}
 
+    public static GameObject LoadGroundHuggingVehicle()
+    {
+        return Resources.Load( "Cars/GroundHuggingVehicle" ) as GameObject;
+    }
+
     public static int GetTeamAttack(EAnimal a)
     {
         switch (a)

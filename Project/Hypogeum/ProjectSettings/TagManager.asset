@@ -33,6 +33,7 @@ TagManager:
   - jumpPad
   - ramp
   - basePad
+  - midPad
   layers:
   - Default
   - TransparentFX

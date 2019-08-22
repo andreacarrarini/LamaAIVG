@@ -11,7 +11,7 @@ public class DDelegatedSteering : MonoBehaviour {
     [Range( 0f, 1000f )] public float maxLinearSpeed = 180f;
 	public float maxAngularSpeed = 5f;
 
-	private MovementStatus status;
+    private MovementStatus status;
 
     private WheelCollider[] wheels = new WheelCollider[ 4 ];
 
@@ -69,23 +69,24 @@ public class DDelegatedSteering : MonoBehaviour {
             // Apply movement only if at least 3 of 4 wheels are on the ground
             int wheelsOnTheGround = 0;
 
-            foreach (WheelCollider wheelCollider in wheels)
+            foreach ( WheelCollider wheelCollider in wheels )
             {
                 if ( wheelCollider.isGrounded )
                     wheelsOnTheGround += 1;
             }
 
-            if (wheelsOnTheGround >= 0)
+            if ( wheelsOnTheGround >= 1 )
             {
                 rb.MovePosition( rb.position + transform.forward * tangentDelta );
                 rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
 
                 //status.movementDirection = transform.forward;
             }
-			//rb.MovePosition (rb.position + transform.forward * tangentDelta);
-			//rb.MoveRotation (rb.rotation * Quaternion.Euler (0f, rotationDelta, 0f));
 
-			status.movementDirection = transform.forward;
+            //rb.MovePosition( rb.position + transform.forward * tangentDelta );
+            //rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
+
+            status.movementDirection = transform.forward;
 		}
 	}
 }

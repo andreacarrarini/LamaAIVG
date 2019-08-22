@@ -368,10 +368,15 @@ namespace Prototype.NetworkLobby
                     var car = GB.LoadAnimalCar(lobby_Player.animal);
                     var car_instance = Instantiate(car, startPositions[conn.connectionId].position, Quaternion.identity);
 
-					// AIProject
-					var AIcar = GB.LoadAICar();
-					var AIcar_instance = Instantiate(AIcar, new Vector3(0, 0, 0), Quaternion.identity);
+                    // AIProject
+                    var AIcar = GB.LoadAICar();
+                    var AIcar_instance = Instantiate( AIcar, new Vector3( 0, 0, 0 ), Quaternion.identity );
                     return car_instance;
+
+                // AIProject
+                //var AIcar = GB.LoadGroundHuggingVehicle();
+                //var AIcar_instance = Instantiate( AIcar, new Vector3( 0, 0, 0 ), Quaternion.identity );
+                //return car_instance;
 
                 case GB.EGameType.Shooting:
                     //Loading the cannon prefab
