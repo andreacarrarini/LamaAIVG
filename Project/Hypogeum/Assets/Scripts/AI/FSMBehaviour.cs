@@ -217,8 +217,17 @@ public class FSMBehaviour : MonoBehaviour
         //bool retValue = 
         //Invoke( "WaitForCoin", 5 );
 
+        StartCoroutine( WaitForCoinTaken() );
+
         return true;
 	}
+
+    public IEnumerator WaitForCoinTaken()
+    {
+        yield return new WaitForSeconds( 5f );
+        if ( !coinTaken )
+            MoveToRamp();
+    }
 
 	// To know from where the coin is accessible and to move to the base of the correct ramp
 	public bool FromCoinToRamp()
@@ -244,7 +253,7 @@ public class FSMBehaviour : MonoBehaviour
                 nearestMidPad = GameObject.Find( "WoodMidPad" );
                 nearestJumpPad = GameObject.Find( "WoodJumpPad" );
                 break;
-            case "StoneJumpPad":
+            case "StoneBasePad":
                 nearestMidPad = GameObject.Find( "StoneMidPad" );
                 nearestJumpPad = GameObject.Find( "StoneJumpPad" );
                 break;
@@ -282,14 +291,6 @@ public class FSMBehaviour : MonoBehaviour
         return false;
     }
 
-    // Just for a debug reason
-    public bool DebugBasePadReached()
-    {
-        if ( basePadReached )
-            return true;
-        return false;
-    }
-
 	// Start is called before the first frame update
 	void Start()
     {
@@ -319,9 +320,9 @@ public class FSMBehaviour : MonoBehaviour
 
         //CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromPad );
         //CRBT.BTCondition c3 = new CRBT.BTCondition( BasePadReached );
-        CRBT.BTCondition c3 = new CRBT.BTCondition( DebugBasePadReached );
+        //CRBT.BTCondition c3 = new CRBT.BTCondition( DebugBasePadReached );
         CRBT.BTCondition c4 = new CRBT.BTCondition( NearestPadFound );
-        CRBT.BTCondition c5 = new CRBT.BTCondition( MidPadReached );
+        //CRBT.BTCondition c5 = new CRBT.BTCondition( MidPadReached );
 
         //CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
         //CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c3 );
