@@ -50,14 +50,18 @@ public class FSMBehaviour : MonoBehaviour
 	// General FSM
 	private FSM generalFSM;
 
-	// Property for coinTaken
+	// Properties
 	public bool CoinTaken { get => coinTaken; set => coinTaken = value; }
+    public bool CarOnRamp { get => carOnRamp; set => carOnRamp = value; }
 
     // List of ramps in the arena
     private GameObject[] ramps;
 
     // To try to avoid the condition checking distance in the UF of PicoCoinBT
     public bool basePadReached, midPadReached = false;
+
+    // To activate the check on how many wheels are on the ground
+    private bool carOnRamp = false;
 
 
 	#region FSM COndition
@@ -195,6 +199,7 @@ public class FSMBehaviour : MonoBehaviour
 
     public bool MoveToMidPad()
     {
+        CarOnRamp = true;
         IgnoreRampRaycast();
         seekBehaviour.destination = nearestMidPad.transform;
         return true;

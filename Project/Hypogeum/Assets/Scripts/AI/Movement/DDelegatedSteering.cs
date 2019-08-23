@@ -66,26 +66,31 @@ public class DDelegatedSteering : MonoBehaviour {
 
 			Rigidbody rb = GetComponent<Rigidbody> ();
 
-            // Apply movement only if at least 3 of 4 wheels are on the ground
-            int wheelsOnTheGround = 0;
-
-            foreach ( WheelCollider wheelCollider in wheels )
+            if (gameObject.GetComponent<FSMBehaviour>().CarOnRamp)
             {
-                if ( wheelCollider.isGrounded )
-                    wheelsOnTheGround += 1;
-            }
+                // Apply movement only if at least 3 of 4 wheels are on the ground
+                int wheelsOnTheGround = 0;
 
-            if ( wheelsOnTheGround >= 1 )
+                foreach ( WheelCollider wheelCollider in wheels )
+                {
+                    if ( wheelCollider.isGrounded )
+                        wheelsOnTheGround += 1;
+                }
+
+                if ( wheelsOnTheGround >= 1 )
+                {
+                    rb.MovePosition( rb.position + transform.forward * tangentDelta );
+                    rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
+
+                    //status.movementDirection = transform.forward;
+                }
+            }
+            else
             {
                 rb.MovePosition( rb.position + transform.forward * tangentDelta );
                 rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
-
-                //status.movementDirection = transform.forward;
             }
-
-            //rb.MovePosition( rb.position + transform.forward * tangentDelta );
-            //rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
-
+            
             status.movementDirection = transform.forward;
 		}
 	}
