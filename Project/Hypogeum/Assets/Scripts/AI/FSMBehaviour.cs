@@ -26,7 +26,7 @@ public class FSMBehaviour : MonoBehaviour
 	private GeneralCar generalCar;
 	private SeekBehaviour seekBehaviour;
 	private FleeBehaviour fleeBehaviour; 
-    public GameObject nearestBasePad, nearestMidPad, nearestJumpPad, nearestCoin = null;
+    public GameObject nearestBasePad, nearestMidPad, nearestJumpPad, nearestCoin, destination = null;
 
 	private float maxHypeValue = 1000f;
 	private bool coinTaken = false;
@@ -36,16 +36,13 @@ public class FSMBehaviour : MonoBehaviour
 	private bool jumpTaken = false;
 
 	// To stop chasing a player in the BT if the FSM changes state
-	private bool mustChase = false;
+	//private bool mustChase = false;
 
 	// Same
-	private bool mustKeepDistance = false;
+	//private bool mustKeepDistance = false;
 
-	// FSMState Attack Behaviour Tree
-	private CRBT.BehaviorTree AttackBT;
-
-    // FMState Pick COin Behaviour Tree
-    private CRBT.BehaviorTree PickCoinBT;
+	// FSMStates Behaviour Trees
+	private CRBT.BehaviorTree AttackBT, PickCoinBT, MoveAroundMapBT;
 
 	// General FSM
 	private FSM generalFSM;
@@ -58,14 +55,17 @@ public class FSMBehaviour : MonoBehaviour
     private GameObject[] ramps;
 
     // To try to avoid the condition checking distance in the UF of PicoCoinBT
-    public bool basePadReached, midPadReached = false;
+    ////public bool basePadReached, midPadReached = false;
 
     // To activate the check on how many wheels are on the ground
     private bool carOnRamp = false;
 
+    // To move randomly around the map
+    //float randomX, randomZ;
 
-	#region FSM COndition
-	public bool EnemiesInRange()
+
+    #region FSM COndition
+    public bool EnemiesInRange()
 	{
 		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange)
 			return true;
@@ -182,11 +182,11 @@ public class FSMBehaviour : MonoBehaviour
         return true;
     }
 
-    public bool WaitForCoin()
-    {
-        basePadReached = false;
-        return true;
-    }
+    //public bool WaitForCoin()
+    //{
+    //    basePadReached = false;
+    //    return true;
+    //}
 
     public void IgnoreRampRaycast()
     {
@@ -208,6 +208,11 @@ public class FSMBehaviour : MonoBehaviour
     public bool MoveToCoin()
 	{
 		seekBehaviour.destination = nearestJumpPad.transform;
+
+        // To avoid to steer all to right nefore taking the coin
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 10;
+
+        // To check if the coin has been taken, if not, do it again
         StartCoroutine( WaitForCoinTaken() );
 
         return true;
@@ -217,7 +222,11 @@ public class FSMBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds( 5f );
         if ( !coinTaken )
+        {
+            // Putting back the steer value to its "default" value
+            gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
             StartCoroutine( PickCoinLauncherCR() );
+        }
     }
 
 	// To know from where the coin is accessible and to move to the base of the correct ramp
@@ -260,19 +269,19 @@ public class FSMBehaviour : MonoBehaviour
 	}
 
     // Not anymore for an Until Fail, now it's for a Selector
-    public bool BasePadReached()
-    {
-        if ( basePadReached )
-            return true;
-        return false;
-    }
+    //public bool BasePadReached()
+    //{
+    //    if ( basePadReached )
+    //        return true;
+    //    return false;
+    //}
 
-    public bool MidPadReached()
-    {
-        if ( midPadReached )
-            return true;
-        return false;
-    }
+    //public bool MidPadReached()
+    //{
+    //    if ( midPadReached )
+    //        return true;
+    //    return false;
+    //}
 
     // For the first Selector in the Pick Coin BT
     public bool NearestPadFound()
@@ -282,17 +291,67 @@ public class FSMBehaviour : MonoBehaviour
         return false;
     }
 
-	// Start is called before the first frame update
-	void Start()
+    #region Move Around Map Tasks
+    public bool DestinationFound()
+    {
+        if ( !destination )
+            return false;
+        return true;
+    }
+
+    // Can be improved
+    public bool PickRandomDestination()
+    {
+        float randomX, randomZ;
+        z
+        if (Random.value < 0.5)
+        {
+            randomX = Random.value * -250;
+            randomZ = Random.value * -230;
+        }
+        randomX = Random.value * 250;
+        randomZ = Random.value * 230;
+
+        destination = Instantiate( new GameObject(), new Vector3( randomX, -6, randomZ ), new Quaternion() );
+
+        return true;
+    }
+
+    public bool MoveToDestination()
+    {
+        seekBehaviour.destination = destination.transform;
+
+        return true;
+    }
+
+    public bool DistanceFromDestination()
+    {
+        if ( (destination.transform.position - gameObject.transform.position).magnitude > 20 )
+            return true;
+        return false;
+    }
+
+    public bool ResetDestination()
+    {
+        Destroy( destination );
+        destination = null;
+        seekBehaviour.destination = null;
+
+        return true;
+    }
+    #endregion
+
+    // Start is called before the first frame update
+    void Start()
     {
 		enemyCar = FindEnemy();
 		generalCar = gameObject.GetComponent<GeneralCar>();
 		seekBehaviour = gameObject.GetComponent<SeekBehaviour>();
 		fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
-        
 
-		// Atack BT
-		CRBT.BTAction a1 = new CRBT.BTAction( Chase );
+
+        #region Attack BT
+        CRBT.BTAction a1 = new CRBT.BTAction( Chase );
 		CRBT.BTAction a2 = new CRBT.BTAction( KeepDistance );
 
 		CRBT.BTCondition c1 = new CRBT.BTCondition( MyResistanceGreaterThanHis );
@@ -302,35 +361,19 @@ public class FSMBehaviour : MonoBehaviour
 		CRBT.BTSelector sel1 = new CRBT.BTSelector( new CRBT.IBTTask[] { seq1, a2 } );
 
 		AttackBT = new CRBT.BehaviorTree( sel1 );
+        #endregion
 
-        // Pick Coin BT
+        #region Pick Coin BT
         CRBT.BTAction a3 = new CRBT.BTAction( FromCoinToRamp );
         CRBT.BTAction a4 = new CRBT.BTAction( MoveToRamp );
         CRBT.BTAction a5 = new CRBT.BTAction( MoveToMidPad );
         CRBT.BTAction a6 = new CRBT.BTAction( MoveToCoin );
 
-        //CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromPad );
-        //CRBT.BTCondition c3 = new CRBT.BTCondition( BasePadReached );
-        //CRBT.BTCondition c3 = new CRBT.BTCondition( DebugBasePadReached );
         CRBT.BTCondition c4 = new CRBT.BTCondition( NearestPadFound );
-        //CRBT.BTCondition c5 = new CRBT.BTCondition( MidPadReached );
-
-        //CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
-        //CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c3 );
-
-        // Selector try (Not working unless the BT is in the Stay Actions of the Pick Coin State of the FSM)
-
-        CRBT.BTSelector sel2 = new CRBT.BTSelector( new CRBT.IBTTask[] { c4, a3 } );
-
-        //CRBT.BTSelector sel3 = new CRBT.BTSelector( new CRBT.IBTTask[] { c3, a4 } );
-
-        //CRBT.BTSelector sel4 = new CRBT.BTSelector( new CRBT.IBTTask[] { c5, a5 } );
-
-        ////CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { a3, a4, uf1, a5 } );
-        //CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { sel2, sel3, sel4, a6 } );
-
         CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromBasePad );
         CRBT.BTCondition c6 = new CRBT.BTCondition( DistanceFromMidPad );
+
+        CRBT.BTSelector sel2 = new CRBT.BTSelector( new CRBT.IBTTask[] { c4, a3 } );
 
         CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
         CRBT.BTDecoratorUntilFail uf2 = new CRBT.BTDecoratorUntilFail( c6 );
@@ -338,11 +381,31 @@ public class FSMBehaviour : MonoBehaviour
         CRBT.BTSequence seq2 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel2, a4, uf1, a5, uf2, a6 } );
 
         PickCoinBT = new CRBT.BehaviorTree( seq2 );
+        #endregion
 
-		#region General FSM
+        #region Move Around Map BT
+        CRBT.BTCondition c7 = new CRBT.BTCondition( DestinationFound );
+        CRBT.BTCondition c8 = new CRBT.BTCondition( DistanceFromDestination );
 
-		#region FSM Transitions
-		FSMTransition t1 = new FSMTransition( EnemiesInRange );
+        CRBT.BTAction a7 = new CRBT.BTAction( PickRandomDestination );
+        CRBT.BTAction a8 = new CRBT.BTAction( MoveToDestination );
+        CRBT.BTAction a9 = new CRBT.BTAction( ResetDestination );
+
+        CRBT.BTSelector sel3 = new CRBT.BTSelector( new CRBT.IBTTask[] { c7, a7 } );
+
+        CRBT.BTDecoratorUntilFail uf3 = new CRBT.BTDecoratorUntilFail( c8 );
+
+        CRBT.BTSequence seq3 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel3, a8, uf3, a9 } );
+
+        CRBT.BTDecoratorUntilFail uf4 = new CRBT.BTDecoratorUntilFail( seq3 );
+
+        MoveAroundMapBT = new CRBT.BehaviorTree( uf4 );
+        #endregion
+
+        #region General FSM
+
+        #region FSM Transitions
+        FSMTransition t1 = new FSMTransition( EnemiesInRange );
 		FSMTransition t2 = new FSMTransition( NoEnemiesInRange );
 		FSMTransition t3 = new FSMTransition( CoinInRangeAndCoinNotTaken );
 		FSMTransition t4 = new FSMTransition( CoinTakenCondition );
@@ -352,7 +415,8 @@ public class FSMBehaviour : MonoBehaviour
 
 		#region FSM States
 		FSMState moveAroundMap = new FSMState();
-		// TODO define enter, stay and exit actions
+        moveAroundMap.enterActions.Add( MoveAroundMapStartCoroutine );
+        moveAroundMap.exitActions.Add( StopMoveAroundMapBT );
 
 		FSMState jumpForHype = new FSMState();
 		// same
@@ -395,17 +459,25 @@ public class FSMBehaviour : MonoBehaviour
     //    PickCoinBT.Step();
     //}
 
+    public void StopAttackBT()
+    {
+        seekBehaviour.destination = null;
+        fleeBehaviour.destination = null;
+    }
+
     public void StopPickCoinBT()
     {
         seekBehaviour.destination = null;
         nearestCoin = null;
-        //nearestJumpPad = null;
+        nearestBasePad = null;
+        nearestMidPad = null;
+        nearestJumpPad = null;
     }
 
-	//public void AttackLauncher()
-	//{
-	//	AttackBT.Step();
-	//}
+    public void StopMoveAroundMapBT()
+    {
+        destination = null;
+    }
 
     #region try with CR
     // Try with CR stopping every step
@@ -421,6 +493,12 @@ public class FSMBehaviour : MonoBehaviour
             yield return new WaitForSeconds( reactionTime );
     }
 
+    public IEnumerator MoveAroundMapLauncherCR()
+    {
+        while ( MoveAroundMapBT.Step() )
+            yield return new WaitForSeconds( reactionTime );
+    }
+
     //public void AttackLauncherWrapper()
     //{
     //    AttackLauncherCR();
@@ -430,6 +508,11 @@ public class FSMBehaviour : MonoBehaviour
     //{
     //    PickCoinLauncherCR();
     //}
+
+    public void MoveAroundMapStartCoroutine()
+    {
+        StartCoroutine( MoveAroundMapLauncherCR() );
+    }
 
     public void AttackStartCoroutine()
     {
@@ -441,12 +524,6 @@ public class FSMBehaviour : MonoBehaviour
         StartCoroutine( PickCoinLauncherCR() );
     }
     #endregion
-
-    public void StopAttackBT()
-	{
-		seekBehaviour.destination = null;
-		fleeBehaviour.destination = null;
-	}
 
 	public GameObject FindEnemy()
 	{
@@ -469,30 +546,30 @@ public class FSMBehaviour : MonoBehaviour
 		}
 	}
 
-    public void IfBaseBadReached()
-    {
-        if ( nearestJumpPad )
-        {
-            if ( !DistanceFromPad( nearestBasePad ) )
-                basePadReached = true;
-        }
-    }
+    //public void IfBaseBadReached()
+    //{
+    //    if ( nearestJumpPad )
+    //    {
+    //        if ( !DistanceFromPad( nearestBasePad ) )
+    //            basePadReached = true;
+    //    }
+    //}
 
-    public void IfMidPadReached()
-    {
-        if ( nearestJumpPad )
-        {
-            if ( !DistanceFromPad( nearestMidPad ) )
-                midPadReached = true;
-        }
-    }
+    //public void IfMidPadReached()
+    //{
+    //    if ( nearestJumpPad )
+    //    {
+    //        if ( !DistanceFromPad( nearestMidPad ) )
+    //            midPadReached = true;
+    //    }
+    //}
 
     // Update is called once per frame
     void Update()
     {
 		if (!enemyCar)
 			enemyCar = FindEnemy();
-        IfBaseBadReached();
-        IfMidPadReached();
+        //IfBaseBadReached();
+        //IfMidPadReached();
     }
 }

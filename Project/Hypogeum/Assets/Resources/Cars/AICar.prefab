@@ -1675,7 +1675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyRange: 22
-  coinRange: 10000
+  coinRange: 50
   jumpRange: 12
   padDistance: 10
   reactionTime: 0.5
