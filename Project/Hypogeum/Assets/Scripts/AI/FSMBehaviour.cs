@@ -208,15 +208,6 @@ public class FSMBehaviour : MonoBehaviour
     public bool MoveToCoin()
 	{
 		seekBehaviour.destination = nearestJumpPad.transform;
-
-        // To give enough time to the car to pick the coin
-        //float wait = 20f;
-        //while ( (wait -= Time.deltaTime) > 0 ) ;
-        //basePadReached = false;
-
-        //bool retValue = 
-        //Invoke( "WaitForCoin", 5 );
-
         StartCoroutine( WaitForCoinTaken() );
 
         return true;
@@ -226,7 +217,7 @@ public class FSMBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds( 5f );
         if ( !coinTaken )
-            MoveToRamp();
+            StartCoroutine( PickCoinLauncherCR() );
     }
 
 	// To know from where the coin is accessible and to move to the base of the correct ramp
@@ -337,8 +328,6 @@ public class FSMBehaviour : MonoBehaviour
 
         ////CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { a3, a4, uf1, a5 } );
         //CRBT.BTSequence seq2 = new CRBT.BTSequence(new CRBT.IBTTask[] { sel2, sel3, sel4, a6 } );
-
-        // UF try
 
         CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromBasePad );
         CRBT.BTCondition c6 = new CRBT.BTCondition( DistanceFromMidPad );

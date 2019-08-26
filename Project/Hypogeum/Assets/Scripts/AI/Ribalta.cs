@@ -39,6 +39,18 @@ public class Ribalta : MonoBehaviour
                 Vector3 respawnPosition = AICarTransform.position;
                 AICarTransform.SetPositionAndRotation( new Vector3( respawnPosition.x, 0, respawnPosition.z ), new Quaternion( 0, 0, 0, 0 ) );
             }
+            else if ( MathMod( zRotation, 360 ) < 280 && (MathMod( zRotation, 360 ) > 80) )
+            {
+                Vector3 respawnPosition = AICarTransform.position;
+                AICarTransform.SetPositionAndRotation( new Vector3( respawnPosition.x, 0, respawnPosition.z ), new Quaternion( 0, 0, 0, 0 ) );
+            }
+
+            // If car falls beneath the map
+            else if (AICarTransform.position.y <= -15 )
+            {
+                Vector3 respawnPosition = AICarTransform.position;
+                AICarTransform.SetPositionAndRotation( new Vector3( respawnPosition.x, 0, respawnPosition.z ), new Quaternion( 0, 0, 0, 0 ) );
+            }
         }
     }
 }
