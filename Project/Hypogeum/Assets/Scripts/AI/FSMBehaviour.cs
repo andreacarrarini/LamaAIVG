@@ -303,7 +303,7 @@ public class FSMBehaviour : MonoBehaviour
     public bool PickRandomDestination()
     {
         float randomX, randomZ;
-        z
+        
         if (Random.value < 0.5)
         {
             randomX = Random.value * -250;
