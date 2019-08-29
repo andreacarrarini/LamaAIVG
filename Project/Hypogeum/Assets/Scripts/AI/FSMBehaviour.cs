@@ -29,6 +29,7 @@ public class FSMBehaviour : MonoBehaviour
     public GameObject nearestBasePad, nearestMidPad, nearestJumpPad, nearestCoin, destination = null;
 
     private Coroutine attackCR, pickCoinCR, moveAroundMapCR = null;
+    private bool resetAttackBT, resetPickCoinBT, resetMoveAroundMapBT = false;
 
 	private float maxHypeValue = 1000f;
 	private bool coinTaken = false;
@@ -345,9 +346,34 @@ public class FSMBehaviour : MonoBehaviour
         destination = null;
         seekBehaviour.destination = null;
 
+        // To never satisfy the UF
         return true;
     }
     #endregion
+
+    public CRBT.BehaviorTree MoveAroundMapBTBuilder()
+    {
+        CRBT.BTCondition c7 = new CRBT.BTCondition( DestinationFound );
+        CRBT.BTCondition c8 = new CRBT.BTCondition( DistanceFromDestination );
+
+        CRBT.BTAction a7 = new CRBT.BTAction( PickRandomDestination );
+        CRBT.BTAction a8 = new CRBT.BTAction( MoveToDestination );
+        CRBT.BTAction a9 = new CRBT.BTAction( ResetDestination );
+
+        CRBT.BTSelector sel3 = new CRBT.BTSelector( new CRBT.IBTTask[] { c7, a7 } );
+
+        CRBT.BTDecoratorUntilFail uf3 = new CRBT.BTDecoratorUntilFail( c8 );
+
+        CRBT.BTSequence seq3 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel3, a8, uf3, a9 } );
+
+        CRBT.BTDecoratorUntilFail uf4 = new CRBT.BTDecoratorUntilFail( seq3 );
+
+        // try with limit
+        CRBT.BTDecoratorLimit lim1 = new CRBT.BTDecoratorLimit( 100, seq3 );
+
+        return new CRBT.BehaviorTree( uf4 );
+        //return new CRBT.BehaviorTree( lim1 );
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -391,28 +417,7 @@ public class FSMBehaviour : MonoBehaviour
         PickCoinBT = new CRBT.BehaviorTree( seq2 );
         #endregion
 
-        #region Move Around Map BT
-        CRBT.BTCondition c7 = new CRBT.BTCondition( DestinationFound );
-        CRBT.BTCondition c8 = new CRBT.BTCondition( DistanceFromDestination );
-
-        CRBT.BTAction a7 = new CRBT.BTAction( PickRandomDestination );
-        CRBT.BTAction a8 = new CRBT.BTAction( MoveToDestination );
-        CRBT.BTAction a9 = new CRBT.BTAction( ResetDestination );
-
-        CRBT.BTSelector sel3 = new CRBT.BTSelector( new CRBT.IBTTask[] { c7, a7 } );
-
-        CRBT.BTDecoratorUntilFail uf3 = new CRBT.BTDecoratorUntilFail( c8 );
-
-        CRBT.BTSequence seq3 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel3, a8, uf3, a9 } );
-
-        //CRBT.BTDecoratorUntilFail uf4 = new CRBT.BTDecoratorUntilFail( seq3 );
-
-        // try with limit
-        CRBT.BTDecoratorLimit lim1 = new CRBT.BTDecoratorLimit( 100, seq3 );
-
-        //MoveAroundMapBT = new CRBT.BehaviorTree( uf4 );
-        MoveAroundMapBT = new CRBT.BehaviorTree( lim1 );
-        #endregion
+        MoveAroundMapBT = MoveAroundMapBTBuilder();
 
         #region General FSM
 
@@ -490,6 +495,7 @@ public class FSMBehaviour : MonoBehaviour
     public void StopAttackBT()
     {
         StopCoroutine( attackCR );
+        attackCR = null;
         seekBehaviour.destination = null;
         fleeBehaviour.destination = null;
     }
@@ -497,6 +503,7 @@ public class FSMBehaviour : MonoBehaviour
     public void StopPickCoinBT()
     {
         StopCoroutine( pickCoinCR );
+        pickCoinCR = null;
         seekBehaviour.destination = null;
         //nearestCoin = null;
         //nearestBasePad = null;
@@ -507,6 +514,9 @@ public class FSMBehaviour : MonoBehaviour
     public void StopMoveAroundMapBT()
     {
         StopCoroutine( moveAroundMapCR );
+        moveAroundMapCR = null;
+        Destroy( destination );
+        destination = null;
         seekBehaviour.destination = null;
         //Destroy( destination );
         //destination = null;
@@ -557,6 +567,10 @@ public class FSMBehaviour : MonoBehaviour
 
     public void MoveAroundMapStartCoroutine()
     {
+        // Perhaps the problem is in the BTs that store the last action performed and resume after, so stopping the coroutine doesn't change that
+        // EDIT: it is this way
+        MoveAroundMapBT = MoveAroundMapBTBuilder();
+
         moveAroundMapCR = StartCoroutine( MoveAroundMapLauncherCR() );
         //seekBehaviour.destination = destination.transform;
     }
