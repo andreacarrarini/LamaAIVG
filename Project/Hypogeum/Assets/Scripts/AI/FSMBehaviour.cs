@@ -375,29 +375,8 @@ public class FSMBehaviour : MonoBehaviour
         //return new CRBT.BehaviorTree( lim1 );
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public CRBT.BehaviorTree PickCoinBTBuilder()
     {
-		enemyCar = FindEnemy();
-		generalCar = gameObject.GetComponent<GeneralCar>();
-		seekBehaviour = gameObject.GetComponent<SeekBehaviour>();
-		fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
-
-
-        #region Attack BT
-        CRBT.BTAction a1 = new CRBT.BTAction( Chase );
-		CRBT.BTAction a2 = new CRBT.BTAction( KeepDistance );
-
-		CRBT.BTCondition c1 = new CRBT.BTCondition( MyResistanceGreaterThanHis );
-
-		CRBT.BTSequence seq1 = new CRBT.BTSequence( new CRBT.IBTTask[] { c1, a1 }) ;
-
-		CRBT.BTSelector sel1 = new CRBT.BTSelector( new CRBT.IBTTask[] { seq1, a2 } );
-
-		AttackBT = new CRBT.BehaviorTree( sel1 );
-        #endregion
-
-        #region Pick Coin BT
         CRBT.BTAction a3 = new CRBT.BTAction( FromCoinToRamp );
         CRBT.BTAction a4 = new CRBT.BTAction( MoveToRamp );
         CRBT.BTAction a5 = new CRBT.BTAction( MoveToMidPad );
@@ -414,8 +393,34 @@ public class FSMBehaviour : MonoBehaviour
 
         CRBT.BTSequence seq2 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel2, a4, uf1, a5, uf2, a6 } );
 
-        PickCoinBT = new CRBT.BehaviorTree( seq2 );
-        #endregion
+        return new CRBT.BehaviorTree( seq2 );
+    }
+
+    public CRBT.BehaviorTree AttackBTBuilder()
+    {
+        CRBT.BTAction a1 = new CRBT.BTAction( Chase );
+        CRBT.BTAction a2 = new CRBT.BTAction( KeepDistance );
+
+        CRBT.BTCondition c1 = new CRBT.BTCondition( MyResistanceGreaterThanHis );
+
+        CRBT.BTSequence seq1 = new CRBT.BTSequence( new CRBT.IBTTask[] { c1, a1 } );
+
+        CRBT.BTSelector sel1 = new CRBT.BTSelector( new CRBT.IBTTask[] { seq1, a2 } );
+
+        return new CRBT.BehaviorTree( sel1 );
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+		enemyCar = FindEnemy();
+		generalCar = gameObject.GetComponent<GeneralCar>();
+		seekBehaviour = gameObject.GetComponent<SeekBehaviour>();
+		fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
+
+        AttackBT = AttackBTBuilder();
+
+        PickCoinBT = PickCoinBTBuilder();
 
         MoveAroundMapBT = MoveAroundMapBTBuilder();
 
@@ -498,6 +503,7 @@ public class FSMBehaviour : MonoBehaviour
         attackCR = null;
         seekBehaviour.destination = null;
         fleeBehaviour.destination = null;
+        resetAttackBT = true;
     }
 
     public void StopPickCoinBT()
@@ -505,6 +511,7 @@ public class FSMBehaviour : MonoBehaviour
         StopCoroutine( pickCoinCR );
         pickCoinCR = null;
         seekBehaviour.destination = null;
+        resetPickCoinBT = true;
         //nearestCoin = null;
         //nearestBasePad = null;
         //nearestMidPad = null;
@@ -518,6 +525,7 @@ public class FSMBehaviour : MonoBehaviour
         Destroy( destination );
         destination = null;
         seekBehaviour.destination = null;
+        resetMoveAroundMapBT = true;
         //Destroy( destination );
         //destination = null;
     }
@@ -569,19 +577,34 @@ public class FSMBehaviour : MonoBehaviour
     {
         // Perhaps the problem is in the BTs that store the last action performed and resume after, so stopping the coroutine doesn't change that
         // EDIT: it is this way
-        MoveAroundMapBT = MoveAroundMapBTBuilder();
+        if ( resetMoveAroundMapBT )
+        {
+            MoveAroundMapBT = MoveAroundMapBTBuilder();
+            resetMoveAroundMapBT = false;
+        }
 
         moveAroundMapCR = StartCoroutine( MoveAroundMapLauncherCR() );
-        //seekBehaviour.destination = destination.transform;
     }
 
     public void AttackStartCoroutine()
     {
+        if ( resetAttackBT )
+        {
+            AttackBT = AttackBTBuilder();
+            resetAttackBT = false;
+        }
+
         attackCR = StartCoroutine( AttackLauncherCR() );
     }
 
     public void PickCoinStartCoroutine()
     {
+        if ( resetPickCoinBT )
+        {
+            PickCoinBT = PickCoinBTBuilder();
+            resetPickCoinBT = false;
+        }
+
         pickCoinCR = StartCoroutine( PickCoinLauncherCR() );
     }
     #endregion
