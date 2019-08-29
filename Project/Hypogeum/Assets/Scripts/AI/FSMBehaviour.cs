@@ -50,14 +50,12 @@ public class FSMBehaviour : MonoBehaviour
 	public bool CoinTaken { get => coinTaken; set => coinTaken = value; }
     public bool CarOnRamp { get => carOnRamp; set => carOnRamp = value; }
 
-    // List of ramps in the arena
-    //private GameObject[] ramps;
-
     // To activate the check on how many wheels are on the ground
     private bool carOnRamp = false;
 
 
-    #region FSM Condition
+    #region FSM Conditions
+
     public bool EnemiesInRange()
 	{
 		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange)
@@ -110,10 +108,13 @@ public class FSMBehaviour : MonoBehaviour
 		}
 		return false;
 	}
-	#endregion
+    #endregion
 
-	// BT CONDITIONS
-	public bool MyResistanceGreaterThanHis()
+    #region BTs Tasks
+
+    #region Conditions
+
+    public bool MyResistanceGreaterThanHis()
 	{
 		if (generalCar.Defense >= enemyCar.GetComponent<GeneralCar>().Defense)
 			return true;
@@ -134,38 +135,53 @@ public class FSMBehaviour : MonoBehaviour
         return false;
     }
 
-    // BT ACTIONS
+    public bool NearestPadFound()
+    {
+        if ( nearestJumpPad )
+            return true;
+        return false;
+    }
+
+    public bool DestinationFound()
+    {
+        if ( destination )
+            return true;
+        return false;
+    }
+
+    public bool DistanceFromDestination()
+    {
+        if ( (destination.transform.position - gameObject.transform.position).magnitude > 20 )
+            return true;
+        return false;
+    }
+    #endregion
+
+    #region Actions
 
     public bool Chase()
-	{
-		// To stop fleeing and start chasing
-		if (MyResistanceGreaterThanHis())
-		{
-			fleeBehaviour.destination = null;
-			seekBehaviour.destination = enemyCar.transform;
-			return true;
-		}
-		return false;
-	}
+    {
+        // To stop fleeing and start chasing
+        if ( MyResistanceGreaterThanHis() )
+        {
+            fleeBehaviour.destination = null;
+            seekBehaviour.destination = enemyCar.transform;
+            return true;
+        }
+        return false;
+    }
 
-	public bool KeepDistance()
-	{
-		// To stop chasing and start fleeing
-		if (!MyResistanceGreaterThanHis())
-		{
-			seekBehaviour.destination = null;
-			fleeBehaviour.destination = enemyCar.transform;
-			return true;
-		}
-		return false;
-	}
-
-	public bool DistanceFromPad( GameObject go )
-	{
-		if ( (go.transform.position - gameObject.transform.position).magnitude > padDistance )
-			return true;
-		return false;
-	}
+    public bool KeepDistance()
+    {
+        // To stop chasing and start fleeing
+        if ( !MyResistanceGreaterThanHis() )
+        {
+            seekBehaviour.destination = null;
+            fleeBehaviour.destination = enemyCar.transform;
+            return true;
+        }
+        return false;
+    }
 
     // Action to make the car go to the base of the ramp
     public bool MoveToRamp()
@@ -175,13 +191,11 @@ public class FSMBehaviour : MonoBehaviour
         return true;
     }
 
-    public void IgnoreRampRaycast()
+    public bool DistanceFromPad( GameObject go )
     {
-        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
-        {
-            // Ignore Raycast
-            go.layer = 2;
-        }
+        if ( (go.transform.position - gameObject.transform.position).magnitude > padDistance )
+            return true;
+        return false;
     }
 
     public bool MoveToMidPad()
@@ -202,27 +216,16 @@ public class FSMBehaviour : MonoBehaviour
         gameObject.GetComponent<AvoidBehaviourVolume>().steer = 3;
 
         // To give the car more speed to take the jump
-        gameObject.GetComponent<SeekBehaviour>().gas *= 1.5f;
+        gameObject.GetComponent<SeekBehaviour>().gas *= 2f;
 
         StartCoroutine( WaitForJump() );
 
         return true;
     }
 
-    public IEnumerator WaitForJump()
-    {
-        yield return new WaitForSeconds( 5f );
-
-        jumpTaken = true;
-
-        // Putting back the steer value to its "default" value
-        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
-
-    }
-
     public bool MoveToCoin()
-	{
-		seekBehaviour.destination = nearestJumpPad.transform;
+    {
+        seekBehaviour.destination = nearestJumpPad.transform;
 
         // To avoid to steer all to right nefore taking the coin
         gameObject.GetComponent<AvoidBehaviourVolume>().steer = 10;
@@ -231,36 +234,21 @@ public class FSMBehaviour : MonoBehaviour
         StartCoroutine( WaitForCoinTaken() );
 
         return true;
-	}
-
-    public IEnumerator WaitForCoinTaken()
-    {
-        yield return new WaitForSeconds( 5f );
-
-        // Putting back the steer value to its "default" value
-        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
-
-        CarOnRamp = false;
-
-        if ( !coinTaken )
-        {
-            StartCoroutine( PickCoinLauncherCR() );
-        }
     }
 
-	// To know from where the coin is accessible and to move to the base of the correct ramp
-	public bool GetRampPads()
-	{
-		float minDistance = 100000f;
+    // To know from where the coin is accessible and to move to the base of the correct ramp
+    public bool GetRampPads()
+    {
+        float minDistance = 100000f;
 
-		foreach (GameObject go in GameObject.FindGameObjectsWithTag(baseTag))
-		{
-			if ((go.transform.position - gameObject.transform.position).magnitude < minDistance)
-			{
-				minDistance = (go.transform.position - gameObject.transform.position).magnitude;
+        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( baseTag ) )
+        {
+            if ( (go.transform.position - gameObject.transform.position).magnitude < minDistance )
+            {
+                minDistance = (go.transform.position - gameObject.transform.position).magnitude;
                 nearestBasePad = go;
-			}
-		}
+            }
+        }
 
         switch ( nearestBasePad.name )
         {
@@ -283,22 +271,6 @@ public class FSMBehaviour : MonoBehaviour
         }
 
         if ( nearestJumpPad && nearestMidPad )
-			return true;
-		return false;
-	}
-
-    // For the first Selector in the Pick Coin BT
-    public bool NearestPadFound()
-    {
-        if ( nearestJumpPad )
-            return true;
-        return false;
-    }
-
-    #region Move Around Map Tasks
-    public bool DestinationFound()
-    {
-        if ( destination )
             return true;
         return false;
     }
@@ -331,13 +303,6 @@ public class FSMBehaviour : MonoBehaviour
         return true;
     }
 
-    public bool DistanceFromDestination()
-    {
-        if ( (destination.transform.position - gameObject.transform.position).magnitude > 20 )
-            return true;
-        return false;
-    }
-
     public bool ResetDestination()
     {
         Destroy( destination );
@@ -348,6 +313,56 @@ public class FSMBehaviour : MonoBehaviour
         return true;
     }
     #endregion
+
+    #endregion
+
+    public void IgnoreRampRaycast()
+    {
+        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
+        {
+            // Ignore Raycast
+            go.layer = 2;
+        }
+    }
+
+    public IEnumerator WaitForJump()
+    {
+        yield return new WaitForSeconds( 5f );
+
+        jumpTaken = true;
+
+        // Putting back the steer value to its "default" value
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
+
+        // Putting back the gas value to its "default" value
+        gameObject.GetComponent<SeekBehaviour>().gas *= 0.5f;
+    }
+
+    public IEnumerator WaitForCoinTaken()
+    {
+        yield return new WaitForSeconds( 5f );
+
+        // Putting back the steer value to its "default" value
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
+
+        CarOnRamp = false;
+
+        if ( !coinTaken )
+        {
+            StartCoroutine( PickCoinLauncherCR() );
+        }
+    }
+
+    public GameObject FindEnemy()
+    {
+        GameObject[] cars = GameObject.FindGameObjectsWithTag( "car" );
+        foreach ( GameObject go in cars )
+        {
+            if ( go.name != "AICar" )
+                return go;
+        }
+        return null;
+    }
 
     public CRBT.BehaviorTree MoveAroundMapBTBuilder()
     {
@@ -366,11 +381,7 @@ public class FSMBehaviour : MonoBehaviour
 
         CRBT.BTDecoratorUntilFail uf4 = new CRBT.BTDecoratorUntilFail( seq3 );
 
-        // try with limit
-        CRBT.BTDecoratorLimit lim1 = new CRBT.BTDecoratorLimit( 100, seq3 );
-
         return new CRBT.BehaviorTree( uf4 );
-        //return new CRBT.BehaviorTree( lim1 );
     }
 
     public CRBT.BehaviorTree PickCoinBTBuilder()
@@ -429,7 +440,6 @@ public class FSMBehaviour : MonoBehaviour
         return new CRBT.BehaviorTree( sel1 );
     }
 
-    // Start is called before the first frame update
     void Start()
     {
 		enemyCar = FindEnemy();
@@ -448,6 +458,7 @@ public class FSMBehaviour : MonoBehaviour
         #region General FSM
 
         #region FSM Transitions
+
         FSMTransition t1 = new FSMTransition( EnemiesInRange );
 		FSMTransition t2 = new FSMTransition( NoEnemiesInRange );
 		FSMTransition t3 = new FSMTransition( CoinInRangeAndCoinNotTaken );
@@ -457,6 +468,7 @@ public class FSMBehaviour : MonoBehaviour
 		#endregion
 
 		#region FSM States
+
 		FSMState moveAroundMap = new FSMState();
         moveAroundMap.enterActions.Add( MoveAroundMapStartCoroutine );
         moveAroundMap.exitActions.Add( StopMoveAroundMapBT );
@@ -494,6 +506,8 @@ public class FSMBehaviour : MonoBehaviour
 		
 	}
 
+    #region Stop BTs
+
     public void StopAttackBT()
     {
         StopCoroutine( attackCR );
@@ -509,6 +523,12 @@ public class FSMBehaviour : MonoBehaviour
         pickCoinCR = null;
         seekBehaviour.destination = null;
         resetPickCoinBT = true;
+
+        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
+        {
+            // Re-enabling raycast detection
+            go.layer = 2;
+        }
     }
 
     public void StopMoveAroundMapBT()
@@ -528,40 +548,44 @@ public class FSMBehaviour : MonoBehaviour
         seekBehaviour.destination = null;
         jumpTaken = false;
         resetJumpForHypeBT = true;
+
+        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
+        {
+            // Re-enabling raycast detection
+            go.layer = 2;
+        }
     }
+
+    #endregion
+
+    #region Coroutines Launchers
 
     public IEnumerator AttackLauncherCR()
     {
-        Debug.Log( "AICar: I'm in state Attack" );
         while (AttackBT.Step())
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator PickCoinLauncherCR()
     {
-        Debug.Log( "AICar: I'm in state Pick Coin" );
         while ( PickCoinBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator MoveAroundMapLauncherCR()
     {
-        Debug.Log( "AICar: I'm in state Move Around Map" );
         while ( MoveAroundMapBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator JumpForHypeLauncherCR()
     {
-        Debug.Log( "AICar: I'm in state Jump For Hype" );
         while ( JumpForHypeBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
     public void MoveAroundMapStartCoroutine()
     {
-        // Perhaps the problem is in the BTs that store the last action performed and resume after, so stopping the coroutine doesn't change that
-        // EDIT: it is this way, need to be recreated when re-entering the state
         if ( resetMoveAroundMapBT )
         {
             MoveAroundMapBT = MoveAroundMapBTBuilder();
@@ -604,16 +628,7 @@ public class FSMBehaviour : MonoBehaviour
         jumpForHypeCR = StartCoroutine( JumpForHypeLauncherCR() );
     }
 
-    public GameObject FindEnemy()
-	{
-		GameObject[] cars = GameObject.FindGameObjectsWithTag("car");
-		foreach (GameObject go in cars)
-		{
-			if (go.name != "AICar")
-				return go;
-		}
-		return null;
-	}
+    #endregion
 
     // The coroutine that cycles through the FSM
 	public IEnumerator MoveThroughFSM()
@@ -625,7 +640,6 @@ public class FSMBehaviour : MonoBehaviour
 		}
 	}
 
-    // Update is called once per frame
     void Update()
     {
 		if (!enemyCar)
