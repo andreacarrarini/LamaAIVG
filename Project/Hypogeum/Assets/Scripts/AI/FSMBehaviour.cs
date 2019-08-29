@@ -28,6 +28,8 @@ public class FSMBehaviour : MonoBehaviour
 	private FleeBehaviour fleeBehaviour; 
     public GameObject nearestBasePad, nearestMidPad, nearestJumpPad, nearestCoin, destination = null;
 
+    private Coroutine attackCR, pickCoinCR, moveAroundMapCR = null;
+
 	private float maxHypeValue = 1000f;
 	private bool coinTaken = false;
 
@@ -63,8 +65,11 @@ public class FSMBehaviour : MonoBehaviour
     // To move randomly around the map
     //float randomX, randomZ;
 
+    // Try to save the last destination for seek beahviour before changing state in FSM
+    //public Transform lastDestination = null;
 
-    #region FSM COndition
+
+    #region FSM Condition
     public bool EnemiesInRange()
 	{
 		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange)
@@ -294,26 +299,29 @@ public class FSMBehaviour : MonoBehaviour
     #region Move Around Map Tasks
     public bool DestinationFound()
     {
-        if ( !destination )
-            return false;
-        return true;
+        if ( destination )
+            return true;
+        return false;
     }
 
     // Can be improved
     public bool PickRandomDestination()
     {
-        float randomX, randomZ;
-        
-        if (Random.value < 0.5)
+        if ( !destination )
         {
-            randomX = Random.value * -250;
-            randomZ = Random.value * -230;
+            float randomX, randomZ;
+
+            if ( Random.value < 0.5 )
+            {
+                randomX = Random.value * -250;
+                randomZ = Random.value * -230;
+            }
+            randomX = Random.value * 250;
+            randomZ = Random.value * 230;
+
+            GameObject go = GB.LoadDestinationPlaceholder();
+            destination = Instantiate( go, new Vector3( randomX, -6, randomZ ), new Quaternion() );
         }
-        randomX = Random.value * 250;
-        randomZ = Random.value * 230;
-
-        destination = Instantiate( new GameObject(), new Vector3( randomX, -6, randomZ ), new Quaternion() );
-
         return true;
     }
 
@@ -397,9 +405,13 @@ public class FSMBehaviour : MonoBehaviour
 
         CRBT.BTSequence seq3 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel3, a8, uf3, a9 } );
 
-        CRBT.BTDecoratorUntilFail uf4 = new CRBT.BTDecoratorUntilFail( seq3 );
+        //CRBT.BTDecoratorUntilFail uf4 = new CRBT.BTDecoratorUntilFail( seq3 );
 
-        MoveAroundMapBT = new CRBT.BehaviorTree( uf4 );
+        // try with limit
+        CRBT.BTDecoratorLimit lim1 = new CRBT.BTDecoratorLimit( 100, seq3 );
+
+        //MoveAroundMapBT = new CRBT.BehaviorTree( uf4 );
+        MoveAroundMapBT = new CRBT.BehaviorTree( lim1 );
         #endregion
 
         #region General FSM
@@ -416,6 +428,8 @@ public class FSMBehaviour : MonoBehaviour
 		#region FSM States
 		FSMState moveAroundMap = new FSMState();
         moveAroundMap.enterActions.Add( MoveAroundMapStartCoroutine );
+        //moveAroundMap.exitActions.Add( SaveLastDestination );
+        //moveAroundMap.stayActions.Add( RestartMoveAroundMapCR );
         moveAroundMap.exitActions.Add( StopMoveAroundMapBT );
 
 		FSMState jumpForHype = new FSMState();
@@ -425,6 +439,8 @@ public class FSMBehaviour : MonoBehaviour
         pickCoin.enterActions.Add( PickCoinStartCoroutine );
         //pickCoin.stayActions.Add( PickCoinLauncher );
         //pickCoin.stayActions.Add( PickCoinLauncherWrapper );
+        //pickCoin.stayActions.Add( RestartPickCoinCR );
+        //pickCoin.exitActions.Add( SaveLastDestination );
         pickCoin.exitActions.Add( StopPickCoinBT );
 
 		FSMState attack = new FSMState();
@@ -459,69 +475,100 @@ public class FSMBehaviour : MonoBehaviour
     //    PickCoinBT.Step();
     //}
 
+    // Try to save the last destination for seek beahviour before changing state in FSM
+    //public void SaveLastDestination()
+    //{
+    //    lastDestination = seekBehaviour.destination;
+    //}
+
+    // To seek the last saved destination before the FSM state change
+    //public void SeekLastDestination()
+    //{
+    //    seekBehaviour.destination = lastDestination;
+    //}
+
     public void StopAttackBT()
     {
+        StopCoroutine( attackCR );
         seekBehaviour.destination = null;
         fleeBehaviour.destination = null;
     }
 
     public void StopPickCoinBT()
     {
+        StopCoroutine( pickCoinCR );
         seekBehaviour.destination = null;
-        nearestCoin = null;
-        nearestBasePad = null;
-        nearestMidPad = null;
-        nearestJumpPad = null;
+        //nearestCoin = null;
+        //nearestBasePad = null;
+        //nearestMidPad = null;
+        //nearestJumpPad = null;
     }
 
     public void StopMoveAroundMapBT()
     {
-        destination = null;
+        StopCoroutine( moveAroundMapCR );
+        seekBehaviour.destination = null;
+        //Destroy( destination );
+        //destination = null;
     }
 
     #region try with CR
     // Try with CR stopping every step
     public IEnumerator AttackLauncherCR()
     {
+        Debug.Log( "AICar; I'm in state Attack" );
         while (AttackBT.Step())
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator PickCoinLauncherCR()
     {
+        Debug.Log( "AICar; I'm in state Pick Coin" );
         while ( PickCoinBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator MoveAroundMapLauncherCR()
     {
+        Debug.Log( "AICar; I'm in state Move Around Map" );
         while ( MoveAroundMapBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
-    //public void AttackLauncherWrapper()
+    //public void RestartAttackCR()
     //{
-    //    AttackLauncherCR();
+    //    if ( !seekBehaviour.destination )
+    //        StartCoroutine( AttackLauncherCR() );
     //}
 
-    //public void PickCoinLauncherWrapper()
+    //public void RestartPickCoinCR()
     //{
-    //    PickCoinLauncherCR();
+    //    if ( !seekBehaviour.destination )
+    //        pickCoinCR = StartCoroutine( PickCoinLauncherCR() );
+    //    //StartCoroutine( PickCoinLauncherCR() );
+    //}
+
+    //public void RestartMoveAroundMapCR()
+    //{
+    //    if ( !seekBehaviour.destination )
+    //        moveAroundMapCR = StartCoroutine( MoveAroundMapLauncherCR() );
+    //    //StartCoroutine( MoveAroundMapLauncherCR() );
     //}
 
     public void MoveAroundMapStartCoroutine()
     {
-        StartCoroutine( MoveAroundMapLauncherCR() );
+        moveAroundMapCR = StartCoroutine( MoveAroundMapLauncherCR() );
+        //seekBehaviour.destination = destination.transform;
     }
 
     public void AttackStartCoroutine()
     {
-        StartCoroutine( AttackLauncherCR() );
+        attackCR = StartCoroutine( AttackLauncherCR() );
     }
 
     public void PickCoinStartCoroutine()
     {
-        StartCoroutine( PickCoinLauncherCR() );
+        pickCoinCR = StartCoroutine( PickCoinLauncherCR() );
     }
     #endregion
 
