@@ -17,7 +17,9 @@ public class FSMBehaviour : MonoBehaviour
 	[Range(0f, 10000f)] public float coinRange;
 	[Range(0f, 50f)] public float jumpRange;
 	[Range(0f, 50f)] public float padDistance;
+
 	public float reactionTime = .5f;
+
 	private string coinTag = "coin";
 	private string jumpTag = "jumpPad";
     private string baseTag = "basePad";
@@ -28,8 +30,8 @@ public class FSMBehaviour : MonoBehaviour
 	private FleeBehaviour fleeBehaviour; 
     public GameObject nearestBasePad, nearestMidPad, nearestJumpPad, nearestCoin, destination = null;
 
-    private Coroutine attackCR, pickCoinCR, moveAroundMapCR = null;
-    private bool resetAttackBT, resetPickCoinBT, resetMoveAroundMapBT = false;
+    private Coroutine attackCR, pickCoinCR, moveAroundMapCR, jumpForHypeCR = null;
+    private bool resetAttackBT, resetPickCoinBT, resetMoveAroundMapBT, resetJumpForHypeBT = false;
 
 	private float maxHypeValue = 1000f;
 	private bool coinTaken = false;
@@ -38,14 +40,8 @@ public class FSMBehaviour : MonoBehaviour
 	// Must be change back to false when leaving the state
 	private bool jumpTaken = false;
 
-	// To stop chasing a player in the BT if the FSM changes state
-	//private bool mustChase = false;
-
-	// Same
-	//private bool mustKeepDistance = false;
-
 	// FSMStates Behaviour Trees
-	private CRBT.BehaviorTree AttackBT, PickCoinBT, MoveAroundMapBT;
+	private CRBT.BehaviorTree AttackBT, PickCoinBT, MoveAroundMapBT, JumpForHypeBT;
 
 	// General FSM
 	private FSM generalFSM;
@@ -55,19 +51,10 @@ public class FSMBehaviour : MonoBehaviour
     public bool CarOnRamp { get => carOnRamp; set => carOnRamp = value; }
 
     // List of ramps in the arena
-    private GameObject[] ramps;
-
-    // To try to avoid the condition checking distance in the UF of PicoCoinBT
-    ////public bool basePadReached, midPadReached = false;
+    //private GameObject[] ramps;
 
     // To activate the check on how many wheels are on the ground
     private bool carOnRamp = false;
-
-    // To move randomly around the map
-    //float randomX, randomZ;
-
-    // Try to save the last destination for seek beahviour before changing state in FSM
-    //public Transform lastDestination = null;
 
 
     #region FSM Condition
@@ -188,12 +175,6 @@ public class FSMBehaviour : MonoBehaviour
         return true;
     }
 
-    //public bool WaitForCoin()
-    //{
-    //    basePadReached = false;
-    //    return true;
-    //}
-
     public void IgnoreRampRaycast()
     {
         foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
@@ -209,6 +190,34 @@ public class FSMBehaviour : MonoBehaviour
         IgnoreRampRaycast();
         seekBehaviour.destination = nearestMidPad.transform;
         return true;
+    }
+
+    public bool Jump()
+    {
+        seekBehaviour.destination = nearestJumpPad.transform;
+
+        CarOnRamp = false;
+
+        // To avoid to steer all to right nefore taking the coin
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 3;
+
+        // To give the car more speed to take the jump
+        gameObject.GetComponent<SeekBehaviour>().gas *= 1.5f;
+
+        StartCoroutine( WaitForJump() );
+
+        return true;
+    }
+
+    public IEnumerator WaitForJump()
+    {
+        yield return new WaitForSeconds( 5f );
+
+        jumpTaken = true;
+
+        // Putting back the steer value to its "default" value
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
+
     }
 
     public bool MoveToCoin()
@@ -227,16 +236,20 @@ public class FSMBehaviour : MonoBehaviour
     public IEnumerator WaitForCoinTaken()
     {
         yield return new WaitForSeconds( 5f );
+
+        // Putting back the steer value to its "default" value
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
+
+        CarOnRamp = false;
+
         if ( !coinTaken )
         {
-            // Putting back the steer value to its "default" value
-            gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
             StartCoroutine( PickCoinLauncherCR() );
         }
     }
 
 	// To know from where the coin is accessible and to move to the base of the correct ramp
-	public bool FromCoinToRamp()
+	public bool GetRampPads()
 	{
 		float minDistance = 100000f;
 
@@ -273,21 +286,6 @@ public class FSMBehaviour : MonoBehaviour
 			return true;
 		return false;
 	}
-
-    // Not anymore for an Until Fail, now it's for a Selector
-    //public bool BasePadReached()
-    //{
-    //    if ( basePadReached )
-    //        return true;
-    //    return false;
-    //}
-
-    //public bool MidPadReached()
-    //{
-    //    if ( midPadReached )
-    //        return true;
-    //    return false;
-    //}
 
     // For the first Selector in the Pick Coin BT
     public bool NearestPadFound()
@@ -377,10 +375,31 @@ public class FSMBehaviour : MonoBehaviour
 
     public CRBT.BehaviorTree PickCoinBTBuilder()
     {
-        CRBT.BTAction a3 = new CRBT.BTAction( FromCoinToRamp );
+        CRBT.BTAction a3 = new CRBT.BTAction( GetRampPads );
         CRBT.BTAction a4 = new CRBT.BTAction( MoveToRamp );
         CRBT.BTAction a5 = new CRBT.BTAction( MoveToMidPad );
         CRBT.BTAction a6 = new CRBT.BTAction( MoveToCoin );
+
+        CRBT.BTCondition c4 = new CRBT.BTCondition( NearestPadFound );
+        CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromBasePad );
+        CRBT.BTCondition c6 = new CRBT.BTCondition( DistanceFromMidPad );
+
+        CRBT.BTSelector sel2 = new CRBT.BTSelector( new CRBT.IBTTask[] { c4, a3 } );
+
+        CRBT.BTDecoratorUntilFail uf1 = new CRBT.BTDecoratorUntilFail( c2 );
+        CRBT.BTDecoratorUntilFail uf2 = new CRBT.BTDecoratorUntilFail( c6 );
+
+        CRBT.BTSequence seq2 = new CRBT.BTSequence( new CRBT.IBTTask[] { sel2, a4, uf1, a5, uf2, a6 } );
+
+        return new CRBT.BehaviorTree( seq2 );
+    }
+
+    public CRBT.BehaviorTree JumpForHypeBTBuilder()
+    {
+        CRBT.BTAction a3 = new CRBT.BTAction( GetRampPads );
+        CRBT.BTAction a4 = new CRBT.BTAction( MoveToRamp );
+        CRBT.BTAction a5 = new CRBT.BTAction( MoveToMidPad );
+        CRBT.BTAction a6 = new CRBT.BTAction( Jump );
 
         CRBT.BTCondition c4 = new CRBT.BTCondition( NearestPadFound );
         CRBT.BTCondition c2 = new CRBT.BTCondition( DistanceFromBasePad );
@@ -424,6 +443,8 @@ public class FSMBehaviour : MonoBehaviour
 
         MoveAroundMapBT = MoveAroundMapBTBuilder();
 
+        JumpForHypeBT = JumpForHypeBTBuilder();
+
         #region General FSM
 
         #region FSM Transitions
@@ -438,25 +459,18 @@ public class FSMBehaviour : MonoBehaviour
 		#region FSM States
 		FSMState moveAroundMap = new FSMState();
         moveAroundMap.enterActions.Add( MoveAroundMapStartCoroutine );
-        //moveAroundMap.exitActions.Add( SaveLastDestination );
-        //moveAroundMap.stayActions.Add( RestartMoveAroundMapCR );
         moveAroundMap.exitActions.Add( StopMoveAroundMapBT );
 
 		FSMState jumpForHype = new FSMState();
-		// same
+        jumpForHype.enterActions.Add( JumpForHypeStartCoroutine );
+        jumpForHype.exitActions.Add( StopJumpForHypeBT );
 
 		FSMState pickCoin = new FSMState();
         pickCoin.enterActions.Add( PickCoinStartCoroutine );
-        //pickCoin.stayActions.Add( PickCoinLauncher );
-        //pickCoin.stayActions.Add( PickCoinLauncherWrapper );
-        //pickCoin.stayActions.Add( RestartPickCoinCR );
-        //pickCoin.exitActions.Add( SaveLastDestination );
         pickCoin.exitActions.Add( StopPickCoinBT );
 
 		FSMState attack = new FSMState();
         attack.enterActions.Add( AttackStartCoroutine );
-        //attack.stayActions.Add( AttackLauncher );
-        //attack.stayActions.Add( AttackLauncherWrapper );
 		attack.exitActions.Add( StopAttackBT );
 
 		// Link states with transitions
@@ -480,23 +494,6 @@ public class FSMBehaviour : MonoBehaviour
 		
 	}
 
-    //public void PickCoinLauncher()
-    //{
-    //    PickCoinBT.Step();
-    //}
-
-    // Try to save the last destination for seek beahviour before changing state in FSM
-    //public void SaveLastDestination()
-    //{
-    //    lastDestination = seekBehaviour.destination;
-    //}
-
-    // To seek the last saved destination before the FSM state change
-    //public void SeekLastDestination()
-    //{
-    //    seekBehaviour.destination = lastDestination;
-    //}
-
     public void StopAttackBT()
     {
         StopCoroutine( attackCR );
@@ -512,10 +509,6 @@ public class FSMBehaviour : MonoBehaviour
         pickCoinCR = null;
         seekBehaviour.destination = null;
         resetPickCoinBT = true;
-        //nearestCoin = null;
-        //nearestBasePad = null;
-        //nearestMidPad = null;
-        //nearestJumpPad = null;
     }
 
     public void StopMoveAroundMapBT()
@@ -526,57 +519,49 @@ public class FSMBehaviour : MonoBehaviour
         destination = null;
         seekBehaviour.destination = null;
         resetMoveAroundMapBT = true;
-        //Destroy( destination );
-        //destination = null;
     }
 
-    #region try with CR
-    // Try with CR stopping every step
+    public void StopJumpForHypeBT()
+    {
+        StopCoroutine( jumpForHypeCR );
+        jumpForHypeCR = null;
+        seekBehaviour.destination = null;
+        jumpTaken = false;
+        resetJumpForHypeBT = true;
+    }
+
     public IEnumerator AttackLauncherCR()
     {
-        Debug.Log( "AICar; I'm in state Attack" );
+        Debug.Log( "AICar: I'm in state Attack" );
         while (AttackBT.Step())
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator PickCoinLauncherCR()
     {
-        Debug.Log( "AICar; I'm in state Pick Coin" );
+        Debug.Log( "AICar: I'm in state Pick Coin" );
         while ( PickCoinBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
     public IEnumerator MoveAroundMapLauncherCR()
     {
-        Debug.Log( "AICar; I'm in state Move Around Map" );
+        Debug.Log( "AICar: I'm in state Move Around Map" );
         while ( MoveAroundMapBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
-    //public void RestartAttackCR()
-    //{
-    //    if ( !seekBehaviour.destination )
-    //        StartCoroutine( AttackLauncherCR() );
-    //}
-
-    //public void RestartPickCoinCR()
-    //{
-    //    if ( !seekBehaviour.destination )
-    //        pickCoinCR = StartCoroutine( PickCoinLauncherCR() );
-    //    //StartCoroutine( PickCoinLauncherCR() );
-    //}
-
-    //public void RestartMoveAroundMapCR()
-    //{
-    //    if ( !seekBehaviour.destination )
-    //        moveAroundMapCR = StartCoroutine( MoveAroundMapLauncherCR() );
-    //    //StartCoroutine( MoveAroundMapLauncherCR() );
-    //}
+    public IEnumerator JumpForHypeLauncherCR()
+    {
+        Debug.Log( "AICar: I'm in state Jump For Hype" );
+        while ( JumpForHypeBT.Step() )
+            yield return new WaitForSeconds( reactionTime );
+    }
 
     public void MoveAroundMapStartCoroutine()
     {
         // Perhaps the problem is in the BTs that store the last action performed and resume after, so stopping the coroutine doesn't change that
-        // EDIT: it is this way
+        // EDIT: it is this way, need to be recreated when re-entering the state
         if ( resetMoveAroundMapBT )
         {
             MoveAroundMapBT = MoveAroundMapBTBuilder();
@@ -607,9 +592,19 @@ public class FSMBehaviour : MonoBehaviour
 
         pickCoinCR = StartCoroutine( PickCoinLauncherCR() );
     }
-    #endregion
 
-	public GameObject FindEnemy()
+    public void JumpForHypeStartCoroutine()
+    {
+        if ( resetJumpForHypeBT )
+        {
+            JumpForHypeBT = JumpForHypeBTBuilder();
+            resetJumpForHypeBT = false;
+        }
+
+        jumpForHypeCR = StartCoroutine( JumpForHypeLauncherCR() );
+    }
+
+    public GameObject FindEnemy()
 	{
 		GameObject[] cars = GameObject.FindGameObjectsWithTag("car");
 		foreach (GameObject go in cars)
@@ -630,30 +625,10 @@ public class FSMBehaviour : MonoBehaviour
 		}
 	}
 
-    //public void IfBaseBadReached()
-    //{
-    //    if ( nearestJumpPad )
-    //    {
-    //        if ( !DistanceFromPad( nearestBasePad ) )
-    //            basePadReached = true;
-    //    }
-    //}
-
-    //public void IfMidPadReached()
-    //{
-    //    if ( nearestJumpPad )
-    //    {
-    //        if ( !DistanceFromPad( nearestMidPad ) )
-    //            midPadReached = true;
-    //    }
-    //}
-
     // Update is called once per frame
     void Update()
     {
 		if (!enemyCar)
 			enemyCar = FindEnemy();
-        //IfBaseBadReached();
-        //IfMidPadReached();
     }
 }

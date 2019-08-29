@@ -1676,7 +1676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyRange: 22
   coinRange: 50
-  jumpRange: 12
+  jumpRange: 35
   padDistance: 10
   reactionTime: 0.5
   nearestBasePad: {fileID: 0}
