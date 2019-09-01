@@ -191,13 +191,6 @@ public class FSMBehaviour : MonoBehaviour
         return true;
     }
 
-    public bool DistanceFromPad( GameObject go )
-    {
-        if ( (go.transform.position - gameObject.transform.position).magnitude > padDistance )
-            return true;
-        return false;
-    }
-
     public bool MoveToMidPad()
     {
         CarOnRamp = true;
@@ -315,6 +308,13 @@ public class FSMBehaviour : MonoBehaviour
     #endregion
 
     #endregion
+
+    public bool DistanceFromPad( GameObject go )
+    {
+        if ( (go.transform.position - gameObject.transform.position).magnitude > padDistance )
+            return true;
+        return false;
+    }
 
     public void IgnoreRampRaycast()
     {
