@@ -85,6 +85,8 @@ public class DDelegatedSteering : MonoBehaviour {
             }
             else
             {
+                //Vector3 forwardOnGround = transform.forward;
+                //forwardOnGround.y = -6.47f;
                 rb.MovePosition( rb.position + transform.forward * tangentDelta );
                 rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
             }

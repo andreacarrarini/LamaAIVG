@@ -321,7 +321,7 @@ public class FSMBehaviour : MonoBehaviour
         foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
         {
             // Ignore Raycast
-            go.layer = 2;
+            go.layer = LayerMask.NameToLayer("Ignore Raycast");
         }
     }
 
