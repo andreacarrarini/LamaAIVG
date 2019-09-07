@@ -196,6 +196,13 @@ public class FSMBehaviour : MonoBehaviour
         CarOnRamp = true;
         IgnoreRampRaycast();
         seekBehaviour.destination = nearestMidPad.transform;
+
+        seekBehaviour.brake *= 0.1f;
+        seekBehaviour.brakeAt *= 0.1f;
+
+        // To ensure the car doesn't try to reach the mid pad from the ground
+        StartCoroutine( WaitForMidPadReached() );
+
         return true;
     }
 
@@ -218,10 +225,15 @@ public class FSMBehaviour : MonoBehaviour
 
     public bool MoveToCoin()
     {
+        CarOnRamp = false;
+
         seekBehaviour.destination = nearestJumpPad.transform;
 
         // To avoid to steer all to right nefore taking the coin
-        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 10;
+        //gameObject.GetComponent<AvoidBehaviourVolume>().steer = 10;
+        gameObject.GetComponent<AvoidBehaviourVolume>().steer = 3;
+
+        gameObject.GetComponent<SeekBehaviour>().gas *= 2f;
 
         // To check if the coin has been taken, if not, do it again
         StartCoroutine( WaitForCoinTaken() );
@@ -329,6 +341,12 @@ public class FSMBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds( 5f );
 
+        // Putting back brake and brakeAt at default values
+        seekBehaviour.brake *= 10f;
+        seekBehaviour.brakeAt *= 10f;
+
+        CarOnRamp = false;
+
         jumpTaken = true;
 
         // Putting back the steer value to its "default" value
@@ -342,14 +360,41 @@ public class FSMBehaviour : MonoBehaviour
     {
         yield return new WaitForSeconds( 5f );
 
+        // Putting back brake and brakeAt at default values
+        seekBehaviour.brake *= 10f;
+        seekBehaviour.brakeAt *= 10f;
+
         // Putting back the steer value to its "default" value
         gameObject.GetComponent<AvoidBehaviourVolume>().steer = 50;
+
+        // Putting back the gas value to its "default" value
+        gameObject.GetComponent<SeekBehaviour>().gas *= 0.5f;
 
         CarOnRamp = false;
 
         if ( !coinTaken )
         {
-            StartCoroutine( PickCoinLauncherCR() );
+            StopPickCoinBT();
+
+            PickCoinStartCoroutine();
+        }
+    }
+
+    public IEnumerator WaitForMidPadReached()
+    {
+        yield return new WaitForSeconds( 4f );
+
+        if ( gameObject.transform.position.y < -5f )
+        {
+            // Putting back brake and brakeAt at default values
+            seekBehaviour.brake *= 10f;
+            seekBehaviour.brakeAt *= 10f;
+
+            StopPickCoinBT();
+
+            CarOnRamp = false;
+
+            PickCoinStartCoroutine();
         }
     }
 
@@ -527,7 +572,7 @@ public class FSMBehaviour : MonoBehaviour
         foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
         {
             // Re-enabling raycast detection
-            go.layer = 2;
+            go.layer = LayerMask.NameToLayer( "Default" );
         }
     }
 
@@ -552,7 +597,7 @@ public class FSMBehaviour : MonoBehaviour
         foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
         {
             // Re-enabling raycast detection
-            go.layer = 2;
+            go.layer = LayerMask.NameToLayer( "Default" );
         }
     }
 

@@ -39,7 +39,7 @@ public class CoinsCollisionManager : MonoBehaviour
 
             foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
             {
-                // Ignore Raycast
+                // Re-enabling raycast detection
                 go.layer = LayerMask.NameToLayer("Default");
             }
 

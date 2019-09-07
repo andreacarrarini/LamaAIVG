@@ -64,6 +64,10 @@ public class DDelegatedSteering : MonoBehaviour {
 			status.linearSpeed = Mathf.Clamp (status.linearSpeed, minLinearSpeed, maxLinearSpeed);
 			status.angularSpeed = Mathf.Clamp (status.angularSpeed, -maxAngularSpeed, maxAngularSpeed);
 
+            // Used to adapt the sight range in AvoidBehaviour
+            AvoidBehaviourVolume avoidBehaviourVolume = gameObject.GetComponent<AvoidBehaviourVolume>();
+            avoidBehaviourVolume.actualSpeed = status.linearSpeed;
+
 			Rigidbody rb = GetComponent<Rigidbody> ();
 
             if (gameObject.GetComponent<FSMBehaviour>().CarOnRamp)
@@ -85,8 +89,8 @@ public class DDelegatedSteering : MonoBehaviour {
             }
             else
             {
-                //Vector3 forwardOnGround = transform.forward;
-                //forwardOnGround.y = -6.47f;
+                Vector3 forwardOnGround = transform.forward;
+                forwardOnGround.y = -6.47f;
                 rb.MovePosition( rb.position + transform.forward * tangentDelta );
                 rb.MoveRotation( rb.rotation * Quaternion.Euler( 0f, rotationDelta, 0f ) );
             }

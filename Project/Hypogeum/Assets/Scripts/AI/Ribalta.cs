@@ -20,12 +20,6 @@ public class Ribalta : MonoBehaviour
         StartCoroutine( Riposiziona() );
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public IEnumerator Riposiziona()
     {
         while ( true )

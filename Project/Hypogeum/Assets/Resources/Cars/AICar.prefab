@@ -1700,6 +1700,7 @@ MonoBehaviour:
   sightAngle: 45
   steer: 50
   backpedal: 10
+  actualSpeed: 0
 --- !u!114 &6747596662834500956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1745,11 +1746,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destination: {fileID: 0}
-  gas: 20
+  gas: 15
   steer: 30
   brake: 20
-  brakeAt: 5
-  stopAt: 0.01
+  brakeAt: 20
+  stopAt: 2
 --- !u!114 &422517559910063052
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1763,7 +1764,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minLinearSpeed: 0.5
-  maxLinearSpeed: 67
+  maxLinearSpeed: 60
   maxAngularSpeed: 5
 --- !u!114 &6473516785114481586
 MonoBehaviour:

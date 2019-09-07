@@ -5,32 +5,20 @@ using UnityEngine;
 public class AvoidBehaviourVolume : MovementBehaviour {
 
     [Range( 0f, 1000f )] public float sightRange;
-	public float sightAngle;
+	public float sightAngle, steer, backpedal;
 
-	public float steer;
-	public float backpedal;
+    // Used to adapt sight range
+    public float actualSpeed;
+
+    //public float baseSightRange = 20f;
+
 
 	public override Vector3 GetAcceleration (MovementStatus status) {
 
+        //sightRange = baseSightRange + actualSpeed * 0.5f;
+        sightRange = actualSpeed;
+
 		Collider collider = GetComponentInChildren<Collider>();
-
-        //bool leftHit = Physics.BoxCast (transform.position, 
-        //                                collider.bounds.extents, 
-        //                                Quaternion.Euler (0f, - sightAngle, 0f) * status.movementDirection, 
-        //                                transform.rotation, 
-        //                                sightRange);
-
-        //bool centerHit = Physics.BoxCast (transform.position, 
-        //                                  collider.bounds.extents, 
-        //                                  status.movementDirection, 
-        //                                  transform.rotation, 
-        //                                  sightRange);
-
-        //bool rightHit = Physics.BoxCast (transform.position, 
-        //                                 collider.bounds.extents, 
-        //                                 Quaternion.Euler (0f, sightAngle, 0f) * status.movementDirection, 
-        //                                 transform.rotation, 
-        //                                 sightRange);
 
         bool leftHit = Physics.Raycast( transform.position,
                                         Quaternion.Euler( 0f, -sightAngle, 0f ) * status.movementDirection,
