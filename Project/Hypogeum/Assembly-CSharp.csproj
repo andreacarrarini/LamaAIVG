@@ -100,7 +100,6 @@
     <Compile Include="Assets\Scripts\AI\Movement\DDelegatedSteering.cs" />
     <Compile Include="Assets\Scripts\AI\Movement\DragBehaviour.cs" />
     <Compile Include="Assets\Scripts\AI\Movement\FleeBehaviour.cs" />
-    <Compile Include="Assets\Scripts\AI\Movement\GroundHuggingVehicle.cs" />
     <Compile Include="Assets\Scripts\AI\Movement\MovementBehaviour.cs" />
     <Compile Include="Assets\Scripts\AI\Movement\MovementStatus.cs" />
     <Compile Include="Assets\Scripts\AI\Movement\SeekBehaviour.cs" />

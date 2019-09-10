@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DragBehaviour : MovementBehaviour {
+public class DragBehaviour : MovementBehaviour
+{
 
-	// how long does it take to stop by dragging
-	public float linearDrag = 3f;
-	public float angularDrag = 3f;
+    // how long does it take to stop by dragging
+    public float linearDrag = 3f;
+    public float angularDrag = 3f;
 
-	public override Vector3 GetAcceleration (MovementStatus status) {
-		return - (status.movementDirection.normalized * status.linearSpeed / linearDrag) 
-			   - ((Quaternion.Euler (0f, 90f, 0f) * status.movementDirection.normalized) * status.angularSpeed / angularDrag);
-	}
+    public override Vector3 GetAcceleration( MovementStatus status )
+    {
+        return -(status.movementDirection.normalized * status.linearSpeed / linearDrag)
+               - ((Quaternion.Euler( 0f, 90f, 0f ) * status.movementDirection.normalized) * status.angularSpeed / angularDrag);
+    }
 }
 

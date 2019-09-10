@@ -5,18 +5,18 @@ using UnityEngine;
 public class Ribalta : MonoBehaviour
 {
 
-	private Transform AICarTransform;
+    private Transform AICarTransform;
 
-	// a modulo b
-	static int MathMod( int a, int b )
-	{
-		return (Mathf.Abs( a * b ) + a) % b;
-	}
-
-	// Start is called before the first frame update
-	void Start()
+    // a modulo b
+    static int MathMod( int a, int b )
     {
-		AICarTransform = gameObject.transform;
+        return (Mathf.Abs( a * b ) + a) % b;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        AICarTransform = gameObject.transform;
         StartCoroutine( Riposiziona() );
     }
 
@@ -40,7 +40,7 @@ public class Ribalta : MonoBehaviour
             }
 
             // If car falls beneath the map
-            else if (AICarTransform.position.y <= -15 )
+            else if ( AICarTransform.position.y <= -15 )
             {
                 Vector3 respawnPosition = AICarTransform.position;
                 AICarTransform.SetPositionAndRotation( new Vector3( respawnPosition.x, 0, respawnPosition.z ), new Quaternion( 0, 0, 0, 0 ) );

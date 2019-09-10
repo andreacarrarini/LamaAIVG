@@ -13,41 +13,41 @@ using UnityEngine;
 
 public class FSMBehaviour : MonoBehaviour
 {
-	[Range(0f, 1000f)] public float enemyRange;
-	[Range(0f, 10000f)] public float coinRange;
-	[Range(0f, 50f)] public float jumpRange;
-	[Range(0f, 50f)] public float padDistance;
+    [Range( 0f, 1000f )] public float enemyRange;
+    [Range( 0f, 10000f )] public float coinRange;
+    [Range( 0f, 50f )] public float jumpRange;
+    [Range( 0f, 50f )] public float padDistance;
 
-	public float reactionTime = .5f;
+    public float reactionTime = .5f;
 
-	private string coinTag = "coin";
-	private string jumpTag = "jumpPad";
+    private string coinTag = "coin";
+    private string jumpTag = "jumpPad";
     private string baseTag = "basePad";
 
-	private GameObject enemyCar = null;
-	private GeneralCar generalCar;
-	private SeekBehaviour seekBehaviour;
-	private FleeBehaviour fleeBehaviour; 
+    private GameObject enemyCar = null;
+    private GeneralCar generalCar;
+    private SeekBehaviour seekBehaviour;
+    private FleeBehaviour fleeBehaviour;
     public GameObject nearestBasePad, nearestMidPad, nearestJumpPad, nearestCoin, destination = null;
 
     private Coroutine attackCR, pickCoinCR, moveAroundMapCR, jumpForHypeCR = null;
     private bool resetAttackBT, resetPickCoinBT, resetMoveAroundMapBT, resetJumpForHypeBT = false;
 
-	private float maxHypeValue = 1000f;
-	private bool coinTaken = false;
+    private float maxHypeValue = 1000f;
+    private bool coinTaken = false;
 
-	// Must be changed to true after the jump is done to exit the state
-	// Must be change back to false when leaving the state
-	private bool jumpTaken = false;
+    // Must be changed to true after the jump is done to exit the state
+    // Must be change back to false when leaving the state
+    private bool jumpTaken = false;
 
-	// FSMStates Behaviour Trees
-	private CRBT.BehaviorTree AttackBT, PickCoinBT, MoveAroundMapBT, JumpForHypeBT;
+    // FSMStates Behaviour Trees
+    private CRBT.BehaviorTree AttackBT, PickCoinBT, MoveAroundMapBT, JumpForHypeBT;
 
-	// General FSM
-	private FSM generalFSM;
+    // General FSM
+    private FSM generalFSM;
 
-	// Properties
-	public bool CoinTaken { get => coinTaken; set => coinTaken = value; }
+    // Properties
+    public bool CoinTaken { get => coinTaken; set => coinTaken = value; }
     public bool CarOnRamp { get => carOnRamp; set => carOnRamp = value; }
 
     // To activate the check on how many wheels are on the ground
@@ -57,57 +57,57 @@ public class FSMBehaviour : MonoBehaviour
     #region FSM Conditions
 
     public bool EnemiesInRange()
-	{
-		if ((enemyCar.transform.position - transform.position).magnitude <= enemyRange)
-			return true;
-		return false;
-	}
+    {
+        if ( (enemyCar.transform.position - transform.position).magnitude <= enemyRange )
+            return true;
+        return false;
+    }
 
-	public bool NoEnemiesInRange()
-	{
-		return !EnemiesInRange();
-	}
+    public bool NoEnemiesInRange()
+    {
+        return !EnemiesInRange();
+    }
 
-	public bool CoinInRangeAndCoinNotTaken()
-	{
-		foreach (GameObject go in GameObject.FindGameObjectsWithTag(coinTag))
-		{
-			if (((go.transform.position - transform.position).magnitude <= coinRange) && !CoinTaken)
-			{
-				nearestCoin = go;
-				return true;
-			}
-		}
-		return false;
-	}
+    public bool CoinInRangeAndCoinNotTaken()
+    {
+        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( coinTag ) )
+        {
+            if ( ((go.transform.position - transform.position).magnitude <= coinRange) && !CoinTaken )
+            {
+                nearestCoin = go;
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public bool CoinTakenCondition()
-	{
-		if (CoinTaken)
-		{
-			return true;
-		}
-		return false;
-	}
+    public bool CoinTakenCondition()
+    {
+        if ( CoinTaken )
+        {
+            return true;
+        }
+        return false;
+    }
 
-	public bool JumpInRangeAndHypeNotFull()
-	{
-		foreach (GameObject go in GameObject.FindGameObjectsWithTag(baseTag))
-		{
-			if (((go.transform.position - transform.position).magnitude <= jumpRange) && (generalCar.Hype < maxHypeValue))
-				return true;
-		}
-		return false;
-	}
+    public bool JumpInRangeAndHypeNotFull()
+    {
+        foreach ( GameObject go in GameObject.FindGameObjectsWithTag( baseTag ) )
+        {
+            if ( ((go.transform.position - transform.position).magnitude <= jumpRange) && (generalCar.Hype < maxHypeValue) )
+                return true;
+        }
+        return false;
+    }
 
-	public bool JumpTaken()
-	{
-		if (jumpTaken)
-		{
-			return true;
-		}
-		return false;
-	}
+    public bool JumpTaken()
+    {
+        if ( jumpTaken )
+        {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region BTs Tasks
@@ -115,11 +115,11 @@ public class FSMBehaviour : MonoBehaviour
     #region Conditions
 
     public bool MyResistanceGreaterThanHis()
-	{
-		if (generalCar.Defense >= enemyCar.GetComponent<GeneralCar>().Defense)
-			return true;
-		return false;
-	}
+    {
+        if ( generalCar.Defense >= enemyCar.GetComponent<GeneralCar>().Defense )
+            return true;
+        return false;
+    }
 
     public bool DistanceFromBasePad()
     {
@@ -333,7 +333,7 @@ public class FSMBehaviour : MonoBehaviour
         foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
         {
             // Ignore Raycast
-            go.layer = LayerMask.NameToLayer("Ignore Raycast");
+            go.layer = LayerMask.NameToLayer( "Ignore Raycast" );
         }
     }
 
@@ -487,10 +487,10 @@ public class FSMBehaviour : MonoBehaviour
 
     void Start()
     {
-		enemyCar = FindEnemy();
-		generalCar = gameObject.GetComponent<GeneralCar>();
-		seekBehaviour = gameObject.GetComponent<SeekBehaviour>();
-		fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
+        enemyCar = FindEnemy();
+        generalCar = gameObject.GetComponent<GeneralCar>();
+        seekBehaviour = gameObject.GetComponent<SeekBehaviour>();
+        fleeBehaviour = gameObject.GetComponent<FleeBehaviour>();
 
         AttackBT = AttackBTBuilder();
 
@@ -505,51 +505,51 @@ public class FSMBehaviour : MonoBehaviour
         #region FSM Transitions
 
         FSMTransition t1 = new FSMTransition( EnemiesInRange );
-		FSMTransition t2 = new FSMTransition( NoEnemiesInRange );
-		FSMTransition t3 = new FSMTransition( CoinInRangeAndCoinNotTaken );
-		FSMTransition t4 = new FSMTransition( CoinTakenCondition );
-		FSMTransition t5 = new FSMTransition( JumpInRangeAndHypeNotFull );
-		FSMTransition t6 = new FSMTransition( JumpTaken );
-		#endregion
+        FSMTransition t2 = new FSMTransition( NoEnemiesInRange );
+        FSMTransition t3 = new FSMTransition( CoinInRangeAndCoinNotTaken );
+        FSMTransition t4 = new FSMTransition( CoinTakenCondition );
+        FSMTransition t5 = new FSMTransition( JumpInRangeAndHypeNotFull );
+        FSMTransition t6 = new FSMTransition( JumpTaken );
+        #endregion
 
-		#region FSM States
+        #region FSM States
 
-		FSMState moveAroundMap = new FSMState();
+        FSMState moveAroundMap = new FSMState();
         moveAroundMap.enterActions.Add( MoveAroundMapStartCoroutine );
         moveAroundMap.exitActions.Add( StopMoveAroundMapBT );
 
-		FSMState jumpForHype = new FSMState();
+        FSMState jumpForHype = new FSMState();
         jumpForHype.enterActions.Add( JumpForHypeStartCoroutine );
         jumpForHype.exitActions.Add( StopJumpForHypeBT );
 
-		FSMState pickCoin = new FSMState();
+        FSMState pickCoin = new FSMState();
         pickCoin.enterActions.Add( PickCoinStartCoroutine );
         pickCoin.exitActions.Add( StopPickCoinBT );
 
-		FSMState attack = new FSMState();
+        FSMState attack = new FSMState();
         attack.enterActions.Add( AttackStartCoroutine );
-		attack.exitActions.Add( StopAttackBT );
+        attack.exitActions.Add( StopAttackBT );
 
-		// Link states with transitions
-		moveAroundMap.AddTransition( t1, attack );
-		moveAroundMap.AddTransition( t3, pickCoin );
-		moveAroundMap.AddTransition( t5, jumpForHype );
+        // Link states with transitions
+        moveAroundMap.AddTransition( t1, attack );
+        moveAroundMap.AddTransition( t3, pickCoin );
+        moveAroundMap.AddTransition( t5, jumpForHype );
 
-		pickCoin.AddTransition( t4, moveAroundMap );
-		pickCoin.AddTransition( t1, attack );
+        pickCoin.AddTransition( t4, moveAroundMap );
+        pickCoin.AddTransition( t1, attack );
 
-		jumpForHype.AddTransition( t6, moveAroundMap );
-		jumpForHype.AddTransition( t1, attack );
+        jumpForHype.AddTransition( t6, moveAroundMap );
+        jumpForHype.AddTransition( t1, attack );
 
-		attack.AddTransition( t2, moveAroundMap );
+        attack.AddTransition( t2, moveAroundMap );
         #endregion
 
         #endregion
 
         generalFSM = new FSM( moveAroundMap );
-		StartCoroutine( MoveThroughFSM() );
-		
-	}
+        StartCoroutine( MoveThroughFSM() );
+
+    }
 
     #region Stop BTs
 
@@ -607,7 +607,7 @@ public class FSMBehaviour : MonoBehaviour
 
     public IEnumerator AttackLauncherCR()
     {
-        while (AttackBT.Step())
+        while ( AttackBT.Step() )
             yield return new WaitForSeconds( reactionTime );
     }
 
@@ -676,18 +676,18 @@ public class FSMBehaviour : MonoBehaviour
     #endregion
 
     // The coroutine that cycles through the FSM
-	public IEnumerator MoveThroughFSM()
-	{
-		while(true)
-		{
-			generalFSM.Update();
-			yield return new WaitForSeconds( reactionTime );
-		}
-	}
+    public IEnumerator MoveThroughFSM()
+    {
+        while ( true )
+        {
+            generalFSM.Update();
+            yield return new WaitForSeconds( reactionTime );
+        }
+    }
 
     void Update()
     {
-		if (!enemyCar)
-			enemyCar = FindEnemy();
+        if ( !enemyCar )
+            enemyCar = FindEnemy();
     }
 }
