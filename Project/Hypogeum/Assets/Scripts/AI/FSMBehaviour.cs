@@ -165,6 +165,10 @@ public class FSMBehaviour : MonoBehaviour
         if ( MyResistanceGreaterThanHis() )
         {
             fleeBehaviour.destination = null;
+
+            seekBehaviour.brake *= 0.1f;
+            seekBehaviour.brakeAt *= 0.1f;
+
             seekBehaviour.destination = enemyCar.transform;
             return true;
         }
@@ -280,7 +284,6 @@ public class FSMBehaviour : MonoBehaviour
         return false;
     }
 
-    // Can be improved
     public bool PickRandomDestination()
     {
         if ( !destination )
@@ -290,10 +293,14 @@ public class FSMBehaviour : MonoBehaviour
             if ( Random.value < 0.5 )
             {
                 randomX = Random.value * -250;
+            }
+            else randomX = Random.value * 250;
+
+            if ( Random.value < 0.5 )
+            {
                 randomZ = Random.value * -230;
             }
-            randomX = Random.value * 250;
-            randomZ = Random.value * 230;
+            else randomZ = Random.value * 230;
 
             GameObject go = GB.LoadDestinationPlaceholder();
             destination = Instantiate( go, new Vector3( randomX, -6, randomZ ), new Quaternion() );
@@ -555,6 +562,10 @@ public class FSMBehaviour : MonoBehaviour
 
     public void StopAttackBT()
     {
+        // Putting back brake and brakeAt at default values
+        seekBehaviour.brake *= 10f;
+        seekBehaviour.brakeAt *= 10f;
+
         StopCoroutine( attackCR );
         attackCR = null;
         seekBehaviour.destination = null;
