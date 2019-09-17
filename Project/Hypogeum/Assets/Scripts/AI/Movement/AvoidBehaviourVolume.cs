@@ -17,7 +17,6 @@ public class AvoidBehaviourVolume : MovementBehaviour
     public override Vector3 GetAcceleration( MovementStatus status )
     {
 
-        //sightRange = baseSightRange + actualSpeed * 0.5f;
         sightRange = actualSpeed;
 
         Collider collider = GetComponentInChildren<Collider>();

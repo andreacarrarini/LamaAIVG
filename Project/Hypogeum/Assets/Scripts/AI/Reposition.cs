@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ribalta : MonoBehaviour
+public class Reposition : MonoBehaviour
 {
 
     private Transform AICarTransform;
@@ -13,14 +13,13 @@ public class Ribalta : MonoBehaviour
         return (Mathf.Abs( a * b ) + a) % b;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         AICarTransform = gameObject.transform;
-        StartCoroutine( Riposiziona() );
+        StartCoroutine( Respawn() );
     }
 
-    public IEnumerator Riposiziona()
+    public IEnumerator Respawn()
     {
         while ( true )
         {
