@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 5005524448631163889}
   - component: {fileID: 7322089076570735465}
   - component: {fileID: 5078269309597809731}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: CoinInstinct
-  m_TagString: CoinInstinct
+  m_TagString: coin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

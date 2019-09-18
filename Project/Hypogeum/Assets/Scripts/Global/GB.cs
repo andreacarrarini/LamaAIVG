@@ -48,24 +48,24 @@ public static class GB
 
     internal static void SetCannonsPositions()
     {
-        var weapons = GameObject.FindGameObjectsWithTag("Cannon");
+        var weapons = GameObject.FindGameObjectsWithTag( "Cannon" );
 
-        if (weapons.Length > 0)
+        if ( weapons.Length > 0 )
         {
-            var cars = GameObject.FindGameObjectsWithTag("car");
+            var cars = GameObject.FindGameObjectsWithTag( "car" );
 
-            if (cars.Length > 0)
-                foreach (var w in weapons)
+            if ( cars.Length > 0 )
+                foreach ( var w in weapons )
                 {
-                    var razzaCannone = w.name.Replace("Cannon", "");
+                    var razzaCannone = w.name.Replace( "Cannon", "" );
 
-                    foreach (var c in cars)
+                    foreach ( var c in cars )
                     {
-                        var razzaAuto = c.name.Replace("Car", "");
+                        var razzaAuto = c.name.Replace( "Car", "" );
 
-                        if (razzaAuto.Equals(razzaCannone))
+                        if ( razzaAuto.Equals( razzaCannone ) )
                         {
-                            var cannonPositionMarker = c.transform.Find("CannonPosition");
+                            var cannonPositionMarker = c.transform.Find( "CannonPosition" );
                             w.transform.position = cannonPositionMarker.position;
                         }
                     }
@@ -73,33 +73,33 @@ public static class GB
         }
     }
 
-    public static void PlayCarEngine(AudioSource carAudioSource, float generalCar_actualSpeed)
+    public static void PlayCarEngine( AudioSource carAudioSource, float generalCar_actualSpeed )
     {
-        if (carAudioSource != null)
+        if ( carAudioSource != null )
         {
-            carAudioSource.volume = Mathf.Min(generalCar_actualSpeed / 40, 1);
+            carAudioSource.volume = Mathf.Min( generalCar_actualSpeed / 40, 1 );
 
-            if (!carAudioSource.isPlaying && carAudioSource.volume > 0)
+            if ( !carAudioSource.isPlaying && carAudioSource.volume > 0 )
                 carAudioSource.Play();
         }
     }
 
-    public static RenderTexture getAnimalRenderTexture(EAnimal animal, EGameType gameType)
+    public static RenderTexture getAnimalRenderTexture( EAnimal animal, EGameType gameType )
     {
         var tipo = (gameType == EGameType.Shooting ? "Shooter" : "");
         var percorso = $"Radar/RadarRenderTexture{animal}s{tipo}";
-        var texture = Resources.Load(percorso) as RenderTexture;
+        var texture = Resources.Load( percorso ) as RenderTexture;
 
         return texture;
     }
 
-    public static void DistruggiOggetti(Object[] oggetti)
+    public static void DistruggiOggetti( Object[] oggetti )
     {
-        foreach (var o in oggetti)
-            Object.Destroy(o);
+        foreach ( var o in oggetti )
+            Object.Destroy( o );
     }
 
-    public static void AbilitaButton(UnityEngine.UI.Button b, bool abilitato)
+    public static void AbilitaButton( UnityEngine.UI.Button b, bool abilitato )
     {
         var img = b.GetComponent<UnityEngine.UI.Image>();
         img.color = (abilitato ? Color.white : Color.gray);
@@ -108,40 +108,40 @@ public static class GB
     }
 
     //da testare
-    public static T FindComponentInChildWithTag<T>(GameObject parent, string tag) where T : Component
+    public static T FindComponentInChildWithTag<T>( GameObject parent, string tag ) where T : Component
     {
         var t = parent.transform;
 
-        foreach (Transform tr in t)
-            if (tr.CompareTag(tag))
+        foreach ( Transform tr in t )
+            if ( tr.CompareTag( tag ) )
                 return tr.GetComponent<T>();
 
         return null;
     }
 
-    public static double ms_to_kmh(float meters_per_seconds)
+    public static double ms_to_kmh( float meters_per_seconds )
     {
         return meters_per_seconds * 3.6;
     }
 
-    public static double ms_to_mph(float meters_per_seconds)
+    public static double ms_to_mph( float meters_per_seconds )
     {
         return meters_per_seconds * 2.237;
     }
 
     public static T getRandomEnum<T>()
     {
-        var values = System.Enum.GetValues(typeof(T));
-        var random = Random.Range(0, values.Length);
+        var values = System.Enum.GetValues( typeof( T ) );
+        var random = Random.Range( 0, values.Length );
 
-        return (T)values.GetValue(random);
+        return ( T ) values.GetValue( random );
     }
 
-    public static string GetCarNameInGameFromAnimalValue(GB.EAnimal animal)
+    public static string GetCarNameInGameFromAnimalValue( GB.EAnimal animal )
     {
         string carName = "";
 
-        switch (animal)
+        switch ( animal )
         {
             case EAnimal.Rhino:
                 carName = "RhinosCar(Clone)";
@@ -162,11 +162,11 @@ public static class GB
         return carName;
     }
 
-    public static GameObject LoadAnimalCar(EAnimal a)
+    public static GameObject LoadAnimalCar( EAnimal a )
     {
         var s = "";
 
-        switch (a)
+        switch ( a )
         {
             case EAnimal.Rhino:
                 s = "RhinosCar";
@@ -184,12 +184,26 @@ public static class GB
                 throw new System.NotImplementedException();
         }
 
-        return Resources.Load($"Cars/{s}") as GameObject;
+        return Resources.Load( $"Cars/{s}" ) as GameObject;
+    }
+    public static GameObject LoadAICar()
+    {
+        return Resources.Load( "Cars/AICar" ) as GameObject;
     }
 
-    public static int GetTeamAttack(EAnimal a)
+    public static GameObject LoadDestinationPlaceholder()
     {
-        switch (a)
+        return Resources.Load( "Placeholders/MoveAroundMapDestination" ) as GameObject;
+    }
+
+    public static GameObject LoadGroundHuggingVehicle()
+    {
+        return Resources.Load( "Cars/GroundHuggingVehicle" ) as GameObject;
+    }
+
+    public static int GetTeamAttack( EAnimal a )
+    {
+        switch ( a )
         {
             case EAnimal.Rhino:
                 return 7;
@@ -204,19 +218,19 @@ public static class GB
         }
     }
 
-    public static GameObject LoadCannon(EAnimal animal)
+    public static GameObject LoadCannon( EAnimal animal )
     {
-        return Resources.Load($"Weapons/{animal.ToString()}sCannon") as GameObject;
+        return Resources.Load( $"Weapons/{animal.ToString()}sCannon" ) as GameObject;
     }
 
-    public static GameObject LoadCoin(ECoin coin)
+    public static GameObject LoadCoin( ECoin coin )
     {
-        return Resources.Load($"Coins/Coin{coin.ToString()}") as GameObject;
+        return Resources.Load( $"Coins/Coin{coin.ToString()}" ) as GameObject;
     }
 
     public static void SwitchFullScreen()
     {
-        if (Screen.fullScreen)
+        if ( Screen.fullScreen )
         {
             Screen.fullScreen = false;
         }
@@ -232,37 +246,37 @@ public static class GB
         var s = SceneManager.GetActiveScene();
         var i = s.buildIndex - 1;
 
-        if (i < 0)
+        if ( i < 0 )
         {
             Application.Quit();
         }
         else
         {
-            var e = (EScenes)i;
-            GotoScene(e);
+            var e = ( EScenes ) i;
+            GotoScene( e );
         }
     }
 
-    public static void GotoSceneName(string name)
+    public static void GotoSceneName( string name )
     {
         var LobbyMName = EScenes.LobbyM.ToString();
-        var p = (name.Contains("Scenes/") ? name : $"Scenes/{name}");
+        var p = (name.Contains( "Scenes/" ) ? name : $"Scenes/{name}");
 
-        if (LobbyManager.s_Singleton != null)
+        if ( LobbyManager.s_Singleton != null )
         {
-            var MostraLobby = name.Equals(LobbyMName);
+            var MostraLobby = name.Equals( LobbyMName );
 
-            LobbyManager.s_Singleton.Restart(MostraLobby);
+            LobbyManager.s_Singleton.Restart( MostraLobby );
         }
 
-        SceneManager.LoadScene(p, LoadSceneMode.Single);
+        SceneManager.LoadScene( p, LoadSceneMode.Single );
     }
 
-    public static void GotoScene(EScenes scene_name)
+    public static void GotoScene( EScenes scene_name )
     {
         var name = scene_name.ToString();
 
-        GotoSceneName(name);
+        GotoSceneName( name );
     }
 
 

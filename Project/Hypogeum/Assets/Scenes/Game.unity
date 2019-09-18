@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1291752858}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1527,6 +1527,36 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 234445666}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &244107279
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 244107280}
+  m_Layer: 0
+  m_Name: DragonJumpPad
+  m_TagString: jumpPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &244107280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 244107279}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.29, y: 4.89, z: 75.66}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 16
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &289101470
 GameObject:
   m_ObjectHideFlags: 0
@@ -1915,6 +1945,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1845646874}
     m_Modifications:
+    - target: {fileID: 153826, guid: 8c3c19c34c678744485079676334c608, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 468028, guid: 8c3c19c34c678744485079676334c608, type: 3}
       propertyPath: m_LocalPosition.x
       value: 243.3
@@ -2066,6 +2100,36 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 020106144993a4946b99db38e8dbdf56, type: 3}
+--- !u!1 &370419152
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 370419153}
+  m_Layer: 0
+  m_Name: WoodJumpPad
+  m_TagString: jumpPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &370419153
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 370419152}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 185.55, y: 15.14, z: 59.38}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 22
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &381667854
 GameObject:
   m_ObjectHideFlags: 0
@@ -2109,6 +2173,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1388394044}
     m_Modifications:
+    - target: {fileID: 169216, guid: 9bda40f4cc3980c42830cb01d8347291, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 477796, guid: 9bda40f4cc3980c42830cb01d8347291, type: 3}
       propertyPath: m_LocalPosition.x
       value: 177.8
@@ -2325,7 +2393,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 156114, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Wood_Platform_01 (1)
+      value: WoodRamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 156114, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
+      propertyPath: m_TagString
+      value: ramp
       objectReference: {fileID: 0}
     - target: {fileID: 473050, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2570,7 +2642,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 156114, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Wood_Platform_01 (3)
+      value: BigBaseRamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 156114, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
+      propertyPath: m_TagString
+      value: ramp
       objectReference: {fileID: 0}
     - target: {fileID: 473050, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2730,7 +2806,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 101222, guid: 646a9bfe65eeeaf42b136fdaf31c4952, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Cave_01_DoubleSided (1)
+      value: DragonRamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 101222, guid: 646a9bfe65eeeaf42b136fdaf31c4952, type: 3}
+      propertyPath: m_TagString
+      value: ramp
       objectReference: {fileID: 0}
     - target: {fileID: 410830, guid: 646a9bfe65eeeaf42b136fdaf31c4952, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3338,6 +3418,36 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
+--- !u!1 &626039475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 626039476}
+  m_Layer: 0
+  m_Name: WoodMidPad
+  m_TagString: midPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &626039476
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626039475}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 209.21, y: 5.85, z: 82.15}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 21
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &631386773
 GameObject:
   m_ObjectHideFlags: 0
@@ -3477,7 +3587,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 156114, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Wood_Platform_01 (2)
+      value: BigJumpRamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 156114, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
+      propertyPath: m_TagString
+      value: ramp
       objectReference: {fileID: 0}
     - target: {fileID: 473050, guid: 480822748dfc6ba478baf6bc23e905e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3591,6 +3705,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1965526658}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &722428389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 722428390}
+  m_Layer: 0
+  m_Name: StoneJumpPad
+  m_TagString: jumpPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &722428390
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722428389}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.91, y: 20.133, z: -139.33}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &729449197
 PrefabInstance:
@@ -5056,6 +5200,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1388394044}
     m_Modifications:
+    - target: {fileID: 122796, guid: 146879b9a407b4947a38bacaa6fc4dd8, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 437822, guid: 146879b9a407b4947a38bacaa6fc4dd8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 221.4
@@ -5677,6 +5825,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &946869922
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 946869923}
+  m_Layer: 0
+  m_Name: StoneMidPad
+  m_TagString: midPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &946869923
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946869922}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -36.77, y: 8.99, z: -154.48}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &988389359
 GameObject:
   m_ObjectHideFlags: 0
@@ -5798,6 +5976,36 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: f0ae0b8a6f2cc444b9e21d50398c458b, type: 3}
+--- !u!1 &994482472
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 994482473}
+  m_Layer: 0
+  m_Name: DragonBasePad
+  m_TagString: basePad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &994482473
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 994482472}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -46.18, y: -7.45, z: 94.64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1013222162
 GameObject:
   m_ObjectHideFlags: 0
@@ -6114,6 +6322,36 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1035762912}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1036384562
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1036384563}
+  m_Layer: 0
+  m_Name: BigJumpPad
+  m_TagString: jumpPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1036384563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1036384562}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -43.28, y: 39.59, z: 26.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 25
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1037172339
 GameObject:
   m_ObjectHideFlags: 0
@@ -6230,6 +6468,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1406251057}
     m_Modifications:
+    - target: {fileID: 195242, guid: c34daa6d7ae26f243b4ceaf341d6ae9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 459182, guid: c34daa6d7ae26f243b4ceaf341d6ae9b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 385.85
@@ -6282,6 +6524,36 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1075187845}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1088972070
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1088972071}
+  m_Layer: 0
+  m_Name: WoodBasePad
+  m_TagString: basePad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1088972071
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1088972070}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 245.72, y: -7.45, z: 128.18}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1113194563
 GameObject:
   m_ObjectHideFlags: 0
@@ -7109,6 +7381,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1388394044}
     m_Modifications:
+    - target: {fileID: 121542, guid: 1e8a1f848e20325468b33aa9d904bce7, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 426146, guid: 1e8a1f848e20325468b33aa9d904bce7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 183.12
@@ -7190,7 +7466,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 176122, guid: 939f27c57ef13654eafcf37ff873a454, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Wall_01 (1)
+      value: StoneRamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 176122, guid: 939f27c57ef13654eafcf37ff873a454, type: 3}
+      propertyPath: m_TagString
+      value: ramp
       objectReference: {fileID: 0}
     - target: {fileID: 449052, guid: 939f27c57ef13654eafcf37ff873a454, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7275,6 +7555,36 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 5.242591, y: 5.2445955, z: 0.4300347}
   m_Center: {x: -2.473404, y: 2.5289936, z: 0.05744252}
+--- !u!1 &1270488634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1270488635}
+  m_Layer: 0
+  m_Name: BigMidPad
+  m_TagString: midPad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1270488635
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270488634}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -100.3, y: 16.6, z: 29.26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 24
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1281031533
 GameObject:
   m_ObjectHideFlags: 0
@@ -7716,6 +8026,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1406251057}
     m_Modifications:
+    - target: {fileID: 117296, guid: 76b8525a8cb16ee498d6e89428f08fb2, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 426538, guid: 76b8525a8cb16ee498d6e89428f08fb2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 290
@@ -9783,6 +10097,36 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: b1551f95b9dd4284497f87973c981bef, type: 3}
+--- !u!1 &1722164755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1722164756}
+  m_Layer: 0
+  m_Name: StoneBasePad
+  m_TagString: basePad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1722164756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1722164755}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -76.36, y: -7.45, z: -187.85}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1728027413
 GameObject:
   m_ObjectHideFlags: 0
@@ -10032,6 +10376,36 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: 63b080f188bd92446b2de42b27fd58f9, type: 3}
+--- !u!1 &1771824055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1771824056}
+  m_Layer: 0
+  m_Name: BigBasePad
+  m_TagString: basePad
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1771824056
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1771824055}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -210.92, y: -7.45, z: 33.28}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 23
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1782684918
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10324,6 +10698,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1140206781}
     m_Modifications:
+    - target: {fileID: 122446, guid: 685e675711b17224685ae3d7ed84139c, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 476394, guid: 685e675711b17224685ae3d7ed84139c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 288.41
@@ -11941,6 +12319,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1140206781}
     m_Modifications:
+    - target: {fileID: 146950, guid: 9019ea3ed03db714dace83699ae7bff6, type: 3}
+      propertyPath: m_TagString
+      value: ramp
+      objectReference: {fileID: 0}
     - target: {fileID: 482344, guid: 9019ea3ed03db714dace83699ae7bff6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 276.71002

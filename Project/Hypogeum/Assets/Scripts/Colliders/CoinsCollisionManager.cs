@@ -16,42 +16,59 @@ public class CoinsCollisionManager : MonoBehaviour
 
     void Start()
     {
-        var obj = GameObject.Find("InstinctReasonManager");
+        var obj = GameObject.Find( "InstinctReasonManager" );
         instinctReasonManager = obj.GetComponent<InstinctReasonManager>();
     }
 
     void Update()
     {
-        gameObject.transform.RotateAroundLocal(Vector3.up, 2 * Time.deltaTime);
+        gameObject.transform.RotateAroundLocal( Vector3.up, 2 * Time.deltaTime );
     }
 
-    private void OnTriggerEnter(Collider otherObjectCollider)
+    // Changed for the AI
+    private void OnTriggerEnter( Collider otherObjectCollider )
     {
         GB.ECoin? tipo = null;
 
-        if (gameObject.CompareTag("CoinReason"))
+        // AI part
+        var gobj = otherObjectCollider.attachedRigidbody.gameObject;
+        if ( gobj.name == "AICar(Clone)" )
+        {
+            gobj.GetComponent<FSMBehaviour>().CoinTaken = true;
+            gobj.GetComponent<FSMBehaviour>().CarOnRamp = false;
+
+            foreach ( GameObject go in GameObject.FindGameObjectsWithTag( "ramp" ) )
+            {
+                // Re-enabling raycast detection
+                go.layer = LayerMask.NameToLayer( "Default" );
+            }
+
+            Destroy( gameObject );
+        }
+
+        if ( gameObject.name == "CoinReason(Clone)" )
             tipo = GB.ECoin.Reason;
-        else if (gameObject.CompareTag("CoinInstinct"))
+        else if ( gameObject.name == "CoinInstinct(Clone)" )
             tipo = GB.ECoin.Instinct;
 
-        if (tipo.HasValue)
+        if ( tipo.HasValue )
         {
             GB.EAnimal? animale = null;
             var go = otherObjectCollider.attachedRigidbody.gameObject;
 
-            if (go.CompareTag("car"))
+            if ( go.CompareTag( "car" ) )
             {
                 var gc = go.GetComponent<GeneralCar>();
                 animale = gc.AnimalType;
             }
-            else if (go.CompareTag("Bullet"))
+            else if ( go.CompareTag( "Bullet" ) )
             {
                 var b = go.GetComponent<Bullet>();
                 animale = b.AnimaleCheHaSparatoQuestoColpo;
             }
 
-            if (animale.HasValue)
-                instinctReasonManager.Cmd_server_OnCoinChosed(animale.Value, tipo.Value, gameObject);
+            if ( animale.HasValue )
+                instinctReasonManager.Cmd_server_OnCoinChosed( animale.Value, tipo.Value, gameObject );
         }
 
     }
