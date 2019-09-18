@@ -1674,7 +1674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebd8d272c3390c548a58e9fd46a1d10c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyRange: 22
+  enemyRange: 50
   coinRange: 50
   jumpRange: 35
   padDistance: 10
@@ -2085,16 +2085,16 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 12
       objectReference: {fileID: 0}
-    - target: {fileID: 8772562477942368213, guid: 8083a620052ffa443be74dbd166eed72,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8772562477933071061, guid: 8083a620052ffa443be74dbd166eed72,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 084e1751f3ec6ef43803fe095b2a3efc, type: 2}
+    - target: {fileID: 8772562477942368213, guid: 8083a620052ffa443be74dbd166eed72,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8083a620052ffa443be74dbd166eed72, type: 3}
 --- !u!4 &835941391244086648 stripped
