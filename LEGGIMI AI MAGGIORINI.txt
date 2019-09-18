@@ -1,0 +1,10 @@
+mi scuso per non essere riuscito a caricare i files
+
+La relazione è /Hypogeum/AI-documentation.pdf
+
+La soluzione di visual studio è /Hypogeum/Project/ProjectSolution.sln
+
+Gli scripts, quelli ex novo per il progetto di AIVG, sono in /Hypogeum/Project/Hypogeum/Assets/Scripts/AI
+
+Il prefab della macchina è /Hypogeum/Project/Hypogeum/Assets/Resources/Cars/AICar
+
